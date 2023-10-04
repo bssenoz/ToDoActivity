@@ -5,5 +5,9 @@
 ```
 
 ```bash
+  cp sample.env .env
+```
+
+```bash
   yarn dev
 ```
