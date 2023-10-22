@@ -54,6 +54,11 @@
                           <p>Bütçe: {{ task.budget }}₺</p>
                           <p>Konum: {{ task.location }} </p>
                         </v-card-text>
+
+                    <v-card-actions>
+                        <v-btn color="primary" block >Tekrar Öner
+                        </v-btn>
+                    </v-card-actions>
                     <v-card-actions>
                         <v-btn color="primary" block @click="dialog = false">Kapat
                         </v-btn>

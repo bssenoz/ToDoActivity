@@ -9,7 +9,7 @@ const routes = [
       {
         path: '',
         name: 'Home',
-        component: () => import('@/views/Home.vue'),
+        component: () => import('@/views/home.vue'),
       },
     ],
   },
@@ -31,7 +31,29 @@ const routes = [
       {
         path: '',
         name: '',
-        component: () => import('@/views/Admin.vue'),
+        component: () => import('@/views/Admin/index.vue'),
+      },
+    ],
+  },
+  {
+    path: '/admin/activity',
+    component: () => import('@/layouts/default/Default.vue'),
+    children: [
+      {
+        path: '',
+        name: '',
+        component: () => import('@/views/Admin/activity.vue'),
+      },
+    ],
+  },
+  {
+    path: '/admin/user',
+    component: () => import('@/layouts/default/Default.vue'),
+    children: [
+      {
+        path: '',
+        name: '',
+        component: () => import('@/views/Admin/user.vue'),
       },
     ],
   },
@@ -42,7 +64,7 @@ const routes = [
       {
         path: '/profile/open',
         name: '',
-        component: () => import('@/views/Profile/Open.vue'),
+        component: () => import('@/views/Profile/open.vue'),
       },
     ],
   },
@@ -53,7 +75,7 @@ const routes = [
       {
         path: '/profile/done',
         name: '',
-        component: () => import('@/views/Profile/Done.vue'),
+        component: () => import('@/views/Profile/done.vue'),
       },
     ],
   },
@@ -64,7 +86,7 @@ const routes = [
       {
         path: '/profile/gallery',
         name: '',
-        component: () => import('@/views/Profile/Gallery.vue'),
+        component: () => import('@/views/Profile/gallery.vue'),
       },
     ],
   },
@@ -75,7 +97,7 @@ const routes = [
       {
         path: '/profile/settings',
         name: '',
-        component: () => import('@/views/Profile/Settings.vue'),
+        component: () => import('@/views/Profile/settings.vue'),
       },
     ],
   },

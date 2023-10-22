@@ -108,9 +108,10 @@
 </template>
 
 <script>
+import { ref } from 'vue';
 import SideBar from "@/components/SideBar.vue";
-import FormTodo from "@/components/FormToDo.vue";
-import FormUpdate from "@/components/FormUpdate.vue";
+import FormTodo from "@/components/profile/FormToDo.vue";
+import FormUpdate from "@/components/profile/FormUpdate.vue";
 import ImageUpload from "@/components/ImageUpload.vue";
 import SuggestionTask from "@/components/SuggestionTask.vue";
 
@@ -122,12 +123,13 @@ export default {
     ImageUpload,
     SuggestionTask
   },
-  data: () => ({
-    dialog: false,
-    images: "",
-    doneDialog: false,
-    imageUpload: false,
-    tasks: [
+  setup() {
+    const dialog = ref(false);
+    const images = ref("");
+    const doneDialog = ref(false);
+    const imageUpload = ref(false);
+
+    const tasks = ref([
       {
         title: "Neque porro",
         text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras tristique augue porttitor ipsum fringilla, nec dignissim magna lacinia.",
@@ -138,40 +140,56 @@ export default {
         image: [""],
         done: false,
       },
-    ],
-  }),
-  methods: {
-    emitImages(images) {
-      this.images = images;
-    },
-    emitTask(task) {
-      this.tasks.push({ ...task });
+    ]);
+
+    const emitImages = (uploadedImages) => {
+      images.value = uploadedImages;
+    };
+
+    const emitTask = (task) => {
+      tasks.value.push({ ...task });
       console.log("Eklendi:", task);
-      console.log(this.tasks)
-    },
-    save(i) {
-      this.tasks[i].image = this.images;
-      this.tasks[i].done = true;
-      console.log("xx", this.tasks);
-      this.dialog = false;
-    },
-    close() {
-      console.log(this.doneDialog);
-      this.doneDialog = false;
-      console.log(this.doneDialog);
-      console.log("image:", this.imageUpload);
-      this.imageUpload = false;
-      console.log("image:", this.imageUpload);
-    },
-    onTaskDoneChange(task) {
-     task.done = !task.done;
+      console.log(tasks.value);
+    };
+
+    const save = (i) => {
+      tasks.value[i].image = images.value;
+      tasks.value[i].done = true;
+      console.log("xx", tasks.value);
+      dialog.value = false;
+    };
+
+    const close = () => {
+      console.log(doneDialog.value);
+      doneDialog.value = false;
+      console.log(doneDialog.value);
+      console.log("image:", imageUpload.value);
+      imageUpload.value = false;
+      console.log("image:", imageUpload.value);
+    };
+
+    const onTaskDoneChange = (task) => {
+      task.done = !task.done;
 
       if (task.done) {
         console.log("Görev işaretlendi:", task);
       } else {
         console.log("Görev işaretlenmedi:", task);
       }
-    },
+    };
+
+    return {
+      dialog,
+      images,
+      doneDialog,
+      imageUpload,
+      tasks,
+      emitImages,
+      emitTask,
+      save,
+      close,
+      onTaskDoneChange,
+    };
   },
 };
 </script>
