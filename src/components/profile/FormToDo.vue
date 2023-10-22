@@ -31,7 +31,7 @@
       variant="solo"
     >
     </v-text-field>
-
+    <v-date-picker show-adjacent-months></v-date-picker>
     <v-text-field
       v-model="location"
       label="Konum"

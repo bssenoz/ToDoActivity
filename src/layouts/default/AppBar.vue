@@ -3,7 +3,7 @@
     <v-app-bar-title>
       <v-icon icon="mdi-circle-slice-4" />
 
-      Base Preset
+      ActivityApp
     </v-app-bar-title>
     <v-container>
       <div class="float-right">

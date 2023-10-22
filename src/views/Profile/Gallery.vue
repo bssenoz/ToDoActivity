@@ -82,6 +82,7 @@
 </template>
 
 <script>
+import { ref, reactive } from 'vue';
 import SideBar from '@/components/SideBar.vue';
 import SuggestionTask from "@/components/SuggestionTask.vue";
 
@@ -90,68 +91,72 @@ export default {
     SideBar,
     SuggestionTask
   },
-  data() {
-    return {
-      hearts: [],
-      selection: [],
-      clickHeart: 0,
-      images: [
-        { src: "https://www.oggusto.com/_next/image?url=https%3A%2F%2Fwp.oggusto.com%2Fwp-content%2Fuploads%2F2023%2F03%2Fistanbul-dogaya-kacis.webp&w=3840&q=75",
-      liked: false },
-        { src: "https://3.bp.blogspot.com/-0VR7eRsN86I/T0Syt_XA6tI/AAAAAAAAAsg/foS_sFVYzQ4/s280/31877333XFeUKbSmnr_ph.jpg",
-        liked: false },
-        { src: "https://avatars.mds.yandex.net/i?id=bf421a6a2369d73abc9ac6b617b9bf5345158b31-8963933-images-thumbs&n=13",
-        liked: false },
-        { src: 'https://picsum.photos/500/300?image=15',
-      liked: true},
-        { src: "https://image.posta.com.tr/i/posta/75/750x0/620737e945d2a0c0140d03f5.jpg" ,
-      liked: false},
-        { src: "https://bigumigu.com/wp-content/uploads/2017/09/66257165859c37e7d497246.21327404.jpg",
-      liked: false },
-        { src: 'https://picsum.photos/500/300?image=16',
-      liked: true},
-      ],
-      selectedTab: 0,
-      likedImages: [],
-      showImageDialog: false, // Resim gösterme diyalog penceresini kontrol etmek için
-      selectedImage: 0, // Büyük gösterilecek resim
-    };
-  },
-  methods: {
-    toggleHeart(image) {
-      console.log("tt")
+  setup() {
+    const hearts = ref([]);
+    const selection = ref([]);
+    const clickHeart = ref(0);
+
+    const images = reactive([
+      { src: "https://www.oggusto.com/_next/image?url=https%3A%2F%2Fwp.oggusto.com%2Fwp-content%2Fuploads%2F2023%2F03%2Fistanbul-dogaya-kacis.webp&w=3840&q=75", liked: false },
+      { src: "https://3.bp.blogspot.com/-0VR7eRsN86I/T0Syt_XA6tI/AAAAAAAAAsg/foS_sFVYzQ4/s280/31877333XFeUKbSmnr_ph.jpg", liked: false },
+      { src: "https://avatars.mds.yandex.net/i?id=bf421a6a2369d73abc9ac6b617b9bf5345158b31-8963933-images-thumbs&n=13", liked: false },
+      { src: 'https://picsum.photos/500/300?image=15', liked: true },
+      { src: "https://image.posta.com.tr/i/posta/75/750x0/620737e945d2a0c0140d03f5.jpg", liked: false },
+      { src: "https://bigumigu.com/wp-content/uploads/2017/09/66257165859c37e7d497246.21327404.jpg", liked: false },
+      { src: 'https://picsum.photos/500/300?image=16', liked: true },
+    ]);
+
+    const selectedTab = ref(0);
+    const likedImages = ref([]);
+    const showImageDialog = ref(false);
+    const selectedImage = ref(0);
+
+    const toggleHeart = (image) => {
       image.liked = !image.liked;
-      this.clickHeart = 1;
+      clickHeart.value = 1;
       if (image.liked) {
-        this.likedImages.push(image);
+        likedImages.value.push(image);
       } else {
-        const index = this.likedImages.findIndex(likedImage => likedImage.src === image.src);
+        const index = likedImages.value.findIndex(likedImage => likedImage.src === image.src);
         if (index !== -1) {
-          this.likedImages.splice(index, 1);
+          likedImages.value.splice(index, 1);
         }
       }
-    
-    },
-    showImageInSlider(image) {
-      console.log("ss")
-      console.log(this.clickHeart)
-      if(this.clickHeart==0) {
-        this.selectedImage = image;
-        this.showImageDialog = true;
+    };
+
+    const showImageInSlider = (image) => {
+      if (clickHeart.value == 0) {
+        selectedImage.value = image;
+        showImageDialog.value = true;
       }
-      this.clickHeart = 0
-    },
-    showHearts() {
+      clickHeart.value = 0;
+    };
+
+    const showHearts = () => {
       for (let i = 0; i < 10; i++) {
         const size = Math.floor(Math.random() * 101) + 50;
         const left = Math.random() * window.innerWidth;
         const animationDuration = Math.random() * 4 + 2;
-        this.hearts.push({ size, left, animationDuration });
+        hearts.value.push({ size, left, animationDuration });
         setTimeout(() => {
-          this.hearts.shift();
+          hearts.value.shift();
         }, animationDuration * 1000);
       }
-    },
+    };
+
+    return {
+      hearts,
+      selection,
+      clickHeart,
+      images,
+      selectedTab,
+      likedImages,
+      showImageDialog,
+      selectedImage,
+      toggleHeart,
+      showImageInSlider,
+      showHearts,
+    };
   },
 };
 </script>
