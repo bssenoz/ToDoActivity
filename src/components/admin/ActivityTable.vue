@@ -6,9 +6,39 @@
     item-value="title"
     class="elevation-1"
   >
+
     <template v-slot:item.update="{ item }">
-      <v-btn @click="updateItem(item)">Güncelle</v-btn>
+      <v-dialog v-model="dialogUpdate" persistent width="auto">
+        <template v-slot:activator="{ props }">
+          <v-btn
+            v-bind="props"
+            class="float-end"
+            @click="dialogItemToUpdate = { ...item }"
+          >
+            Güncelle
+          </v-btn>
+        </template>
+
+        <v-card >
+          <v-card-title class="text-h6">
+            <v-text-field v-model="dialogItemToUpdate.title" label="Etkinlik" outlined variant="solo"></v-text-field>
+            <v-text-field v-model="dialogItemToUpdate.text" label="Açıklama" outlined variant="solo"></v-text-field>
+            <v-text-field v-model="dialogItemToUpdate.day" label="Gün" outlined variant="solo"></v-text-field>
+            <v-text-field v-model="dialogItemToUpdate.budget" label="Bütçe" outlined variant="solo"></v-text-field>
+          </v-card-title>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="black-darken-1" variant="text" @click="dialogUpdate = false">
+              İptal
+            </v-btn>
+            <v-btn color="green-darken-1" variant="text" @click="updateItem(dialogItemToUpdate)">
+              Güncelle
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </template>
+
     <template v-slot:item.delete="{ item }">
       <v-dialog v-model="dialogDelete" persistent width="auto">
         <template v-slot:activator="{ props }">
@@ -50,22 +80,35 @@ export default {
     updateActivities: Function,
   },
   setup(props) {
-    const itemsPerPage = ref(5);
+    const itemsPerPage = ref(10);
     const headers = [
-      { text: 'Etkinlik', value: 'title', align: 'start', sortable: false },
-      { text: 'Açıklama', value: 'text', align: 'end' },
-      { text: 'Gün', value: 'day', align: 'end' },
-      { text: 'Bütçe', value: 'budget', align: 'end' },
-      { text: 'Güncelle', align: 'end', value: 'update' },
-      { text: 'Sil', align: 'end', value: 'delete' },
+      { title: 'Etkinlik', key: 'title', align: 'start', sortable: false },
+      { title: 'Açıklama', key: 'text', align: 'end' },
+      { title: 'Gün', key: 'day', align: 'end' },
+      { title: 'Bütçe', key: 'budget', align: 'end' },
+      { title: '', align: 'end', key: 'update' },
+      { title: '', align: 'end', key: 'delete' },
     ];
 
     const dialogDelete = ref(false);
+    const dialogUpdate = ref(false);
     const dialogItemToDelete = ref(null);
+    const dialogItemToUpdate = ref(null);
 
-    const updateItem = (item) => {
-      console.log(item);
-      // Güncelleme işlemi 
+    const updateItem = (updatedItem) => {
+      if (updatedItem) {
+        const updatedActivities = props.activities.map((activity) => {
+          if (activity.title === updatedItem.title) {
+            return updatedItem;
+          }
+          return activity;
+        });
+
+        props.updateActivities(updatedActivities);
+
+        dialogUpdate.value = false;
+
+      }
     };
 
     const handleDelete = (item) => {
@@ -79,7 +122,6 @@ export default {
 
           dialogDelete.value = false;
 
-          console.log(`${itemToDelete.title} adlı etkinlik silindi.`);
         }
       }
     };
@@ -88,10 +130,18 @@ export default {
       itemsPerPage,
       headers,
       dialogDelete,
+      dialogUpdate,
       dialogItemToDelete,
+      dialogItemToUpdate,
       updateItem,
       handleDelete,
     };
   },
 };
 </script>
+
+<style scoped>
+::v-deep(.v-overlay__content) {
+  width:500px !important;
+}
+</style>

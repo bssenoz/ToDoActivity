@@ -5,7 +5,7 @@
   <v-list-item link title="Etkinlik" href="/admin/activity"></v-list-item>
   <v-list-item link title="Kullanıcı" href="/admin/user"></v-list-item>
   <v-list-item link title="İstatik"></v-list-item>
-  <v-list-item link title="İletişim"></v-list-item>
+  <v-list-item link title="Mesajlar" href="/admin/message"></v-list-item>
 </v-navigation-drawer>
 </template>
 

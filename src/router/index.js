@@ -20,7 +20,7 @@ const routes = [
       {
         path: '',
         name: '',
-        component: () => import('@/views/Profile/index.vue'),
+        component: () => import('@/views/profile/index.vue'),
       },
     ],
   },
@@ -31,7 +31,7 @@ const routes = [
       {
         path: '',
         name: '',
-        component: () => import('@/views/Admin/index.vue'),
+        component: () => import('@/views/admin/index.vue'),
       },
     ],
   },
@@ -42,7 +42,7 @@ const routes = [
       {
         path: '',
         name: '',
-        component: () => import('@/views/Admin/activity.vue'),
+        component: () => import('@/views/admin/activity.vue'),
       },
     ],
   },
@@ -53,7 +53,18 @@ const routes = [
       {
         path: '',
         name: '',
-        component: () => import('@/views/Admin/user.vue'),
+        component: () => import('@/views/admin/user.vue'),
+      },
+    ],
+  },
+  {
+    path: '/admin/message',
+    component: () => import('@/layouts/default/Default.vue'),
+    children: [
+      {
+        path: '',
+        name: '',
+        component: () => import('@/views/admin/message.vue'),
       },
     ],
   },
@@ -64,7 +75,7 @@ const routes = [
       {
         path: '/profile/open',
         name: '',
-        component: () => import('@/views/Profile/open.vue'),
+        component: () => import('@/views/profile/open.vue'),
       },
     ],
   },
@@ -75,7 +86,7 @@ const routes = [
       {
         path: '/profile/done',
         name: '',
-        component: () => import('@/views/Profile/done.vue'),
+        component: () => import('@/views/profile/done.vue'),
       },
     ],
   },
@@ -86,7 +97,7 @@ const routes = [
       {
         path: '/profile/gallery',
         name: '',
-        component: () => import('@/views/Profile/gallery.vue'),
+        component: () => import('@/views/profile/gallery.vue'),
       },
     ],
   },
@@ -97,7 +108,7 @@ const routes = [
       {
         path: '/profile/settings',
         name: '',
-        component: () => import('@/views/Profile/settings.vue'),
+        component: () => import('@/views/profile/settings.vue'),
       },
     ],
   },
