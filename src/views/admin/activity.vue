@@ -1,31 +1,37 @@
 <template>
     <SideBarAdmin/>
-    <div class="text-h5">Etkinlikler</div>
-    <v-dialog
-      v-model="dialogCreate"
-      persistent
-      width="auto"
-    >
-      <template v-slot:activator="{ props }">
-        <v-btn
-          v-bind="props"
-          class="float-end" color="blue-darken-1">Yeni Etkinlik
-        </v-btn>
-      </template>
-      
-      <v-card>
-        <v-card-title class="text-h6">
-          <ActivityCreate @task="addActivity"/>
-        </v-card-title>
-        <v-card-actions>
-           <v-btn color="primary" block @click="dialogCreate = false">Kapat</v-btn>
-        </v-card-actions>
+    <v-container>
+      <v-row>
+        <v-col>
+          <div class="text-h5">Etkinlikler</div>
+        </v-col>
+        <v-col>
+          <v-dialog
+            v-model="dialogCreate"
+            persistent
+            width="auto"
+          >
+            <template v-slot:activator="{ props }">
+              <v-btn
+                v-bind="props"
+                class="float-end" color="blue-darken-1">Yeni Etkinlik
+              </v-btn>
+            </template>
+            
+            <v-card>
+              <v-card-title class="text-h6">
+                <ActivityCreate @task="addActivity"/>
+              </v-card-title>
+              <v-card-actions>
+                <v-btn color="primary" block @click="dialogCreate = false">Kapat</v-btn>
+              </v-card-actions>
 
-      </v-card>
-    </v-dialog>
-   
-    <ActivityTable :activities="activities" :updateActivities="updateActivities" />
-
+            </v-card>
+          </v-dialog>
+        </v-col>
+      </v-row>
+    <ActivityTable :activities="activities" :updateActivities="updateActivities" class="mt-4"/>
+  </v-container>
 </template>
       
 <script>
