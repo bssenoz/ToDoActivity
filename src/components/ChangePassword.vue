@@ -10,19 +10,19 @@
                   v-model="currentPassword"
                   label="Mevcut Şifre"
                   type="password"
-                  required
+                  required variant="solo"
                 ></v-text-field>
                 <v-text-field
                   v-model="newPassword"
                   label="Yeni Şifre"
                   type="password"
-                  required
+                  required variant="solo"
                 ></v-text-field>
                 <v-text-field
                   v-model="confirmPassword"
                   label="Yeni Şifre Tekrar"
                   type="password"
-                  required
+                  required variant="solo"
                 ></v-text-field>
                 <v-btn type="submit" color="primary">Şifre Değiştir</v-btn>
               </v-form>
