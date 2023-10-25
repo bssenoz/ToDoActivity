@@ -103,8 +103,8 @@ export default {
       { src: 'https://picsum.photos/500/300?image=15', liked: true },
       { src: "https://image.posta.com.tr/i/posta/75/750x0/620737e945d2a0c0140d03f5.jpg", liked: false },
       { src: "https://bigumigu.com/wp-content/uploads/2017/09/66257165859c37e7d497246.21327404.jpg", liked: false },
-      { src: 'https://picsum.photos/500/300?image=16', liked: true },
-    ]);
+      { src: 's://picsum.photos/500/300?image=16', liked: true },
+    ]);http
 
     const selectedTab = ref(0);
     const likedImages = ref([]);
