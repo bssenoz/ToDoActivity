@@ -6,6 +6,17 @@
     item-value="title"
     class="elevation-1"
   >
+    <template v-slot:item.text="{ item }">
+      <v-tooltip :text="item.text">
+        <template v-slot:activator="{ props }">
+          <span v-bind="props">{{ item.text.length <= 100 ? item.text : item.text.slice(0, 100) + (item.text.length > 100 ? '...' : '') }}</span>
+        </template>
+      </v-tooltip>
+    </template>
+
+    <template v-slot:item.image="{ item }">
+      <img :src="item.image" style="display: flex; justify-content: center; align-items: center; margin: .5rem; width: 100px" />
+    </template>
 
     <template v-slot:item.update="{ item }">
       <v-dialog v-model="dialogUpdate" persistent width="auto">
@@ -19,12 +30,13 @@
           </v-btn>
         </template>
 
-        <v-card >
+        <v-card>
           <v-card-title class="text-h6">
             <v-text-field v-model="dialogItemToUpdate.title" label="Etkinlik" outlined variant="solo"></v-text-field>
-            <v-text-field v-model="dialogItemToUpdate.text" label="Açıklama" outlined variant="solo"></v-text-field>
+            <v-textarea v-model="dialogItemToUpdate.text" label="Açıklama" variant="solo"></v-textarea>
             <v-text-field v-model="dialogItemToUpdate.day" label="Gün" outlined variant="solo"></v-text-field>
             <v-text-field v-model="dialogItemToUpdate.budget" label="Bütçe" outlined variant="solo"></v-text-field>
+            <ImageUpload v-model="dialogItemToUpdate.image" />
           </v-card-title>
           <v-card-actions>
             <v-spacer></v-spacer>
@@ -72,23 +84,28 @@
 </template>
 
 <script>
-import { ref, defineProps } from 'vue';
+import { ref } from 'vue';
+import ImageUpload from '@/components/admin/ImageUpload.vue';
 
 export default {
   props: {
     activities: Array,
     updateActivities: Function,
   },
+  components: {
+    ImageUpload
+  },
   setup(props) {
     const itemsPerPage = ref(10);
     const headers = [
       { title: 'Etkinlik', key: 'title', align: 'start', sortable: false },
-      { title: 'Açıklama', key: 'text', align: 'end' },
-      { title: 'Gün', key: 'day', align: 'end' },
-      { title: 'Bütçe', key: 'budget', align: 'end' },
+      { title: 'Açıklama', key: 'text', align: 'start' },
+      { title: 'Gün', key: 'day', align: 'start' },
+      { title: 'Bütçe', key: 'budget', align: 'start' },
+      { title: 'Resim', key: 'image', align: 'start' },
       { title: '', align: 'end', key: 'update' },
       { title: '', align: 'end', key: 'delete' },
-    ];
+  ];
 
     const dialogDelete = ref(false);
     const dialogUpdate = ref(false);
@@ -107,7 +124,6 @@ export default {
         props.updateActivities(updatedActivities);
 
         dialogUpdate.value = false;
-
       }
     };
 
@@ -121,7 +137,6 @@ export default {
           props.updateActivities(updatedActivities);
 
           dialogDelete.value = false;
-
         }
       }
     };
@@ -142,6 +157,6 @@ export default {
 
 <style scoped>
 ::v-deep(.v-overlay__content) {
-  width:500px !important;
+  width: 500px !important;
 }
 </style>

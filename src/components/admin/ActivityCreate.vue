@@ -9,6 +9,7 @@
         <v-text-field v-model="task.text" label="Açıklama" variant="solo"></v-text-field>
         <v-text-field v-model="task.day" label="Gün Sayısı" variant="solo"></v-text-field>
         <v-text-field v-model="task.budget" label="Bütçe" variant="solo"></v-text-field>
+        <ImageUpload v-model="task.image" />
       </v-col>
     </v-row>
     <v-row>
@@ -22,10 +23,14 @@
 
 <script>
 import { ref, defineComponent } from 'vue';
+import ImageUpload from '@/components/admin/ImageUpload.vue';
 
 export default defineComponent({
   props: {
     dialogCreate: Boolean,
+  },
+  components: {
+    ImageUpload
   },
   setup(props, { emit }) {
     const task = ref({
@@ -33,6 +38,7 @@ export default defineComponent({
       title: null,
       day: null,
       budget: null,
+      image: null,
     });
 
     const reset = () => {
@@ -41,13 +47,15 @@ export default defineComponent({
         title: null,
         day: null,
         budget: null,
+        image: null,
       };
     };
 
     const createActivity = () => {
       emit('task', task.value);
+      console.log(task.value)
       emit('update:dialogCreate', false);
-      task.value = { title: '', text: '', day: '', budget: '' };
+      task.value = { title: '', text: '', day: '', budget: '',image: '' };
     };
 
     return {

@@ -31,6 +31,7 @@
         </v-col>
       </v-row>
     <ActivityTable :activities="activities" :updateActivities="updateActivities" class="mt-4"/>
+    
   </v-container>
 </template>
       
@@ -53,6 +54,7 @@
           text: 'Lorem ipsum dolor sit amet',
           day: 1,
           budget: 94,
+          image: 'https://pasajblog.turkcell.com.tr/wp-content/uploads/2021/11/IB_API_P_1208201_19222829-e6bf-4025-836e-d2c3cfe0fa0a.jpg'
         },
         {
           title: 'Puzzle',
@@ -60,54 +62,63 @@
             'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean lacinia magna dolor. Fusce efficitur massa ut quam maximus, ac auctor augue iaculis.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean lacinia magna dolor. Fusce efficitur massa ut quam maximus, ac auctor augue iaculis',
           day: 1,
           budget: 24,
+          image: 'https://picsum.photos/500/300?image=16'
         },
         {
           title: 'Doğa Yürüyüşü',
           text: 'Lorem ipsum dolor sit amet',
           day: 1,
           budget: 65,
+          image:'https://picsum.photos/500/300?image=14'
         },
         {
           title: 'Fotoğraf Çekimi',
           text: '',
           day: 1,
           budget: 67,
+          image: ''
         },
         {
           title: 'Film İzlemek',
           text: 'Lorem ipsum',
           day: 1,
           budget: 23,
+          image: ''
         },
         {
           title: 'Müze Gezmek',
           text: 'Lorem ipsum dolor sit amet',
           day: 1,
           budget: 49,
+          image:'https://picsum.photos/500/300?image=12'
         },
         {
           title: 'Bowling Oynamak',
           text: 'Lorem',
           day: 1,
           budget: 37,
+          image:''
         },
         {
           title: 'Karaoke Gecesi',
           text: 'Lorem ipsum dolor sit amet',
           day: 1,
           budget: 98,
+          image: 'https://picsum.photos/500/300?image=10'
         },
         {
           title: 'Pasta Yapmak',
           text: 'Lorem ipsum dolor sit amet',
           day: 1,
           budget: 87,
+          image:'https://picsum.photos/500/300?image=4'
         },
         {
           title: 'Yoga Yapmak',
           text: '',
           day: 1,
           budget: 51,
+          image: ''
         },
     ]);
     const addActivity = (newActivity) => {
