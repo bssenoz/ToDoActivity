@@ -1,18 +1,17 @@
 // Plugins
 import vue from '@vitejs/plugin-vue'
 import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
+import path from 'path'; // path modülünü içe aktarın
 
 // Utilities
 import { defineConfig } from 'vite'
-import { fileURLToPath, URL } from 'node:url'
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    vue({ 
+    vue({
       template: { transformAssetUrls }
     }),
-    // https://github.com/vuetifyjs/vuetify-loader/tree/next/packages/vite-plugin
     vuetify({
       autoImport: true,
       styles: {
@@ -23,7 +22,7 @@ export default defineConfig({
   define: { 'process.env': {} },
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
+      '@': path.resolve(__dirname, 'src'), // Gerekli olan yolu ayarlayın.
     },
     extensions: [
       '.js',
@@ -37,5 +36,14 @@ export default defineConfig({
   },
   server: {
     port: 3000,
+    proxy: {
+      // Backend API isteklerini şu URL'e yönlendirin
+      '/api': {
+        target: 'https://localhost:44376/', // Backend API'nizin URL'si ile değiştirin.
+        changeOrigin: true,
+        secure: false,
+        rewrite: path => path.replace(/^\/api/, '/api'),
+      },
+    },
   },
 })

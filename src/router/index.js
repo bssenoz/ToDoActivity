@@ -112,6 +112,28 @@ const routes = [
       },
     ],
   },
+  {
+    path: '/admin',
+    component: () => import('@/layouts/default/None.vue'),
+    children: [
+      {
+        path: '/login',
+        name: '',
+        component: () => import('@/views/login.vue'),
+      },
+    ],
+  },
+  {
+    path: '/admin',
+    component: () =>  import('@/layouts/default/None.vue'),
+    children: [
+      {
+        path: '/register',
+        name: '',
+        component: () => import('@/views/register.vue'),
+      },
+    ],
+  },
 ]
 
 const router = createRouter({
