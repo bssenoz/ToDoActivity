@@ -6,7 +6,7 @@
         <ChangeProfileImage/>
        </v-col>
        <v-col cols="8">
-          <FormProfile :task="user"/>
+          <FormProfile :user="user"/>
         </v-col>
       </v-row>
       <v-row>
@@ -31,12 +31,14 @@
       ChangeProfileImage,
       ChangePassword
     },
+    name: "UserSettings",
     setup() {
       const user = ref({
-        name: "Name",
-        surname: "Surname",
-        mail: "mail@gmail.com",
-        date: "01.01.2000",
+        name: "Lorem",
+        surname: "Ipsum",
+        email: "lorem@gmail.com",
+        birthDate: "01.01.2000",
+        location: "İstanbul",
         image:
           "https://www.befunky.com/images/wp/wp-2021-01-linkedin-profile-picture-after.jpg?auto=avif,webp&format=jpg&width=944"
       });

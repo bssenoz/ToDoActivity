@@ -37,9 +37,8 @@ export default defineConfig({
   server: {
     port: 3000,
     proxy: {
-      // Backend API isteklerini şu URL'e yönlendirin
       '/api': {
-        target: 'https://localhost:44376/', // Backend API'nizin URL'si ile değiştirin.
+        target: 'https://localhost:44334/',
         changeOrigin: true,
         secure: false,
         rewrite: path => path.replace(/^\/api/, '/api'),

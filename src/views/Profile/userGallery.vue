@@ -53,7 +53,6 @@
               </v-card-text>
 
               <div>
-                <v-btn @click="showHearts">Kalpleri Uçur</v-btn>
                 <div v-for="(heart, index) in hearts" :key="index" class="heart"></div>
               </div>
             </v-card>
@@ -82,7 +81,7 @@
 </template>
 
 <script>
-import { ref, reactive } from 'vue';
+import { ref, reactive, watch  } from 'vue';
 import SideBar from '@/components/SideBar.vue';
 import SuggestionTask from "@/components/SuggestionTask.vue";
 
@@ -103,8 +102,8 @@ export default {
       { src: 'https://picsum.photos/500/300?image=15', liked: true },
       { src: "https://image.posta.com.tr/i/posta/75/750x0/620737e945d2a0c0140d03f5.jpg", liked: false },
       { src: "https://bigumigu.com/wp-content/uploads/2017/09/66257165859c37e7d497246.21327404.jpg", liked: false },
-      { src: 's://picsum.photos/500/300?image=16', liked: true },
-    ]);http
+      { src: 'https://picsum.photos/500/300?image=11', liked: true },
+    ]);
 
     const selectedTab = ref(0);
     const likedImages = ref([]);
@@ -133,17 +132,28 @@ export default {
     };
 
     const showHearts = () => {
-      for (let i = 0; i < 10; i++) {
-        const size = Math.floor(Math.random() * 101) + 50;
-        const left = Math.random() * window.innerWidth;
-        const animationDuration = Math.random() * 4 + 2;
-        hearts.value.push({ size, left, animationDuration });
-        setTimeout(() => {
-          hearts.value.shift();
-        }, animationDuration * 1000);
-      }
-    };
+      const heartCount = 10;
+      const animationDuration = 2;
 
+      for (let i = 0; i < heartCount; i++) {
+        setTimeout(() => {
+          const size = Math.floor(Math.random() * 101) + 50;
+          const left = Math.random() * window.innerWidth;
+          hearts.value.push({ size, left, animationDuration });
+
+          setTimeout(() => {
+            hearts.value.shift();
+          }, animationDuration * 1000);
+        }, i * (animationDuration * 200));
+      }
+  };
+
+
+    watch(selectedTab, (newCounter) => {
+      if(newCounter === 1) {
+        showHearts()
+      } 
+    });
     return {
       hearts,
       selection,

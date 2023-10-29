@@ -6,13 +6,13 @@
     item-value="title"
     class="elevation-1"
   >
-    <template v-slot:item.text="{ item }">
+    <!-- <template v-slot:item.text="{ item }">
       <v-tooltip :text="item.text">
         <template v-slot:activator="{ props }">
           <span v-bind="props">{{ item.text.length <= 100 ? item.text : item.text.slice(0, 100) + (item.text.length > 100 ? '...' : '') }}</span>
         </template>
       </v-tooltip>
-    </template>
+    </template> -->
 
     <template v-slot:item.image="{ item }">
       <img :src="item.image" style="display: flex; justify-content: center; align-items: center; margin: .5rem; width: 100px" />

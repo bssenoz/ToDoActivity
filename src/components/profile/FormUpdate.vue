@@ -1,39 +1,59 @@
 <template>
-    <v-container>
+    <v-container style="width:500px">
       <v-row>
         <v-col>
-          <div v-for="(deger, key) in task" :key="key">
+          <v-text-field
+      v-model="task.title"
+      label="Başlık"
+      variant="solo" outlined
+    >
+    </v-text-field>
+        <v-text-field
+      v-model="task.text" outlined
+      label="İçerik"
+      variant="solo"
+    >
+    </v-text-field>
 
-            <v-row v-if="key == 'title'" @click="duzenleModunuBaslat(key)">
-                <v-col cols="9"><div class="mt-2">
-                    {{ deger }}</div></v-col>
-                <v-col cols="3"><v-list-item prepend-icon="mdi-pencil"></v-list-item></v-col>
-            </v-row>
-            <v-row v-if="key == 'text'" @click="duzenleModunuBaslat(key)">
-                <v-col cols="9"><div class="mt-2">{{ deger }}</div></v-col>
-                <v-col cols="3"><v-list-item prepend-icon="mdi-pencil"></v-list-item></v-col>
-            </v-row>
+<v-select
+          label="Tarih"
+          v-model="task.timed"
+          :items="dateOptions"
+          item-text="title"
+          item-value="value"
+          variant="solo" outlined
+        ></v-select>
 
-            <v-row v-if="key == 'date'" @click="duzenleModunuBaslat(key)">
-                <v-col cols="9"><div class="mt-2">{{ deger }}</div></v-col>
-                <v-col cols="3"><v-list-item prepend-icon="mdi-pencil"></v-list-item></v-col>
-            </v-row>
-            <v-row v-if="key == 'day'" @click="duzenleModunuBaslat(key)">
-                <v-col cols="9"><div class="mt-2" >{{ deger }}</div></v-col>
-                <v-col cols="3"><v-list-item prepend-icon="mdi-pencil"></v-list-item></v-col>
-            </v-row>
-            <v-row v-if="key == 'location'" @click="duzenleModunuBaslat(key)">
-                <v-col cols="9"><div class="mt-2">{{ deger }}</div></v-col>
-                <v-col cols="3"><v-list-item prepend-icon="mdi-pencil"></v-list-item></v-col>
-            </v-row>
-              
-            <v-text-field
-              v-if="duzenleModu === key"
-              v-model="task[key]"
-              variant="solo"
-              @blur="duzenleModunuBitir(key)"
-            ></v-text-field>
-          </div>
+      <v-text-field v-if="task.timed === certain.value"
+      v-model="task.startTime"
+      label="Başlangıç Tarihi"
+      type="date"
+      variant="solo" outlined
+      >
+      </v-text-field>
+<v-text-field v-if="task.timed === certain.value"
+      v-model="task.endTime"
+      label="Bitiş Tarihi"
+      type="date"
+      variant="solo" outlined
+    >
+    </v-text-field>
+
+    <v-text-field
+      v-model="task.location"
+      label="Konum"
+      variant="solo" outlined
+    >
+    </v-text-field>
+
+    <v-text-field
+      v-model="task.budget"
+      label="Bütçe"
+      variant="solo" outlined
+    >
+    </v-text-field>
+
+        <v-btn @click="UpdateActivity">Güncelle</v-btn>
         </v-col>
       </v-row>
     </v-container>
@@ -41,24 +61,59 @@
   
 <script>
 import { ref } from 'vue';
+import axios from 'axios';
+import Swal from 'sweetalert2';
 
 export default {
   props: {
     task: Object,
   },
   setup(props) {
-    const duzenleModu = ref(null);
 
-    const duzenleModunuBaslat = (key) => {
-      duzenleModu.value = key;
-      console.log('key: ', key);
-    };
+    const certain = {title: 'Belli',value: true};
+    const uncertain = {title: 'Belirsiz',value: false};
+    const dateOptions = [certain, uncertain];
 
-    const duzenleModunuBitir = (key) => {
-      duzenleModu.value = null;
-    };
+ const UpdateActivity = async () => {
+  try {
+        const token = localStorage.getItem("x-access-token");
+    
+        const response = await axios.put(`/api/Activity/UpdateActivity/${props.task.activityId}`,
+        {
+          title: props.task.title,
+          text: props.task.text,
+          startTime: props.task.startTime,
+          endTime: props.task.endTime,
+          budget: props.task.budget,
+          location: props.task.location,
+          timed: props.task.timed,
+          done: props.task.done,
+        }, {
+          headers: {
+            'Authorization': `Bearer ${token}`,   
+            'Content-Type': 'application/json'    
+          },
+        });
 
-    return { duzenleModu, duzenleModunuBaslat, duzenleModunuBitir };
+        if (response.status === 200) {
+          await Swal.fire({
+                title: 'Planını güncelledin!',
+                icon: 'success',
+                confirmButtonText: 'Tamam',
+              });
+              window.location.reload
+          
+        }
+      } catch (error) {
+        console.log(error);
+      }
+ }
+   
+    return { 
+      UpdateActivity,
+      certain,
+      uncertain,
+      dateOptions};
   },
 };
 </script>

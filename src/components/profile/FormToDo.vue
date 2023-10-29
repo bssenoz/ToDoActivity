@@ -18,20 +18,30 @@
     >
     </v-text-field>
 
-        <v-text-field
-      v-model="date"
-      label="Tarih"
+<v-select
+          label="Tarih"
+          v-model="timed"
+          :items="dateOptions"
+          item-text="title"
+          item-value="value"
+          variant="solo"
+        ></v-select>
+
+<v-text-field v-if="timed === certain.value"
+v-model="startTime"
+label="Başlangıç Tarihi"
+type="date"
+variant="solo"
+>
+</v-text-field>
+<v-text-field v-if="timed === certain.value"
+      v-model="endTime"
+      label="Bitiş Tarihi"
+      type="date"
       variant="solo"
     >
     </v-text-field>
 
-        <v-text-field
-      v-model="day"
-      label="Gün Sayısı"
-      variant="solo"
-    >
-    </v-text-field>
-    <v-date-picker show-adjacent-months></v-date-picker>
     <v-text-field
       v-model="location"
       label="Konum"
@@ -53,13 +63,13 @@
         <v-col>
            <v-btn
      class="me-4"
-     type="submit" @click="create"
+     type="submit" @click="CreateActivity"
    >
-     submit
+     Ekle
    </v-btn>
 
-   <v-btn @click="reset">
-     clear
+   <v-btn @click="resetForm">
+     Temizle
    </v-btn>
         </v-col>
 
@@ -69,68 +79,87 @@
 
 </template>
 <script>
+import { ref } from 'vue';
+import axios from 'axios';
+import Swal from 'sweetalert2';
 
-  export default {
+export default {
+  setup() {
+    const certain = {title: 'Belli',value: true};
+    const uncertain = {title: 'Belirsiz',value: false};
+    const text = ref('');
+    const title = ref('');
+    const timed = ref(true);
+    const startTime = ref(null);
+    const endTime = ref(null);
+    const createTime = ref(new Date());
+    const budget = ref(null);
+    const location = ref('');
+    const done = ref(false);
+    const dateOptions = [certain, uncertain];
+    
+    const CreateActivity = async () => {
 
-    data: () => ({
-      task: {},
-      // tasks: [
-      //   {
-      //     title: 'Neque porro',
-      //     text: 'Lorem ipsum sit amet doler',
-      //     date: 'Belirsiz',
-      //     day: '3',
-      //     budget:'1000-5000',
-      //     location: 'Sakarya',
-      //     image: [''],
-      //     done: false
-      //   },
-        
-      // ],
-      done: false,
-      text: null,
-      title: null,
-      day: null,
-      date: null,
-      budget: null,
-      location: null,
-      image: null,
-    }),
+      try {
+        const token = localStorage.getItem("x-access-token")
+   
+        const response = await axios.post('/api/Activity/CreateActivity', {
+          title: title.value,
+          text: text.value,
+          startTime: startTime.value,
+          endTime: endTime.value,
+          budget: budget.value,
+          location: location.value,
+          timed: timed.value,
+          done: done.value
+        }, {
+          headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+        })
 
-
-    methods: {
-      create () {
-        // this.task.push({
-        //   done: false,
-        //   text: this.text,
-        //   title: this.title,
-        //   day: this.day,
-        //   date: this.date,
-        //   budget: this.budget,
-        //   location: this.location,
-        //   image: [''],
-        // })
-        this.task.text = this.text;
-        this.task.title = this.title;
-        this.task.day = this.day,
-        this.task.date = this.date,
-        this.task.budget = this.budget,
-        this.task.location =  this.location,
-        this.task.image = [''],
-        this.task.done = false
-
-        this.$emit("task", this.task);
-        this.reset()
-      },
-      reset() {
-        this.text = null
-        this.title = null
-        this.day = null
-        this.date = null
-        this.budget = null
-        this.location = null
-        this.image = null
+        if(response.status === 200) {
+          await Swal.fire({
+          title: 'Yeni plan tanımlandı',
+          icon: 'success',
+          confirmButtonText: 'Tamam',
+        });
+        // resetForm()
+        window.location.reload();
+        }
+      } catch(error) {
+        console.log(error)
       }
-    },
+    };
+
+    const resetForm =  () => {
+      title.value = ''
+      text.value = ''
+      startTime.value = ''
+      endTime.value = ''
+      budget.value = ''
+      location.value = ''
+    }
+    
+    
+    return {
+      CreateActivity,
+      resetForm,
+      text,
+      title,
+      timed,
+      startTime,
+      endTime,
+      createTime,
+      budget,
+      location,
+      certain,
+      uncertain,
+      dateOptions
+    }
+
   }
+}
+
 </script>

@@ -13,35 +13,44 @@
 </template>
 
 <script>
+import { ref } from 'vue';
+
 export default {
   props: {
     modelValue: String,
+    task: Object,
   },
-  computed: {
-    imagePreviewStyle() {
-      return {
-        'background-image': this.modelValue ? `url(${this.modelValue})` : 'none',
-        'background-color': this.modelValue ? 'transparent' : 'gray',
-      };
-    },
-  },
-  methods: {
-    openFileInput() {
-      this.$refs.fileInput.click();
-    },
-    uploadImage(event) {
+  setup(props, { emit }) {
+    const fileInputRef = ref(null);
+
+    const imagePreviewStyle = ref({
+      'background-image': props.modelValue ? `url(${props.modelValue})` : 'none',
+      'background-color': props.modelValue ? 'transparent' : 'gray',
+    });
+
+    const openFileInput = () => {
+      console.log("props: ",props.task)
+      fileInputRef.value.click();
+    };
+
+    const uploadImage = (event) => {
       const file = event.target.files[0];
+      console.log("file",file)
+      console.log("props2: ",props.task)
       if (file) {
         const reader = new FileReader();
         reader.onload = (e) => {
-          this.$emit('update:modelValue', e.target.result);
+          emit('update:modelValue', e.target.result);
         };
         reader.readAsDataURL(file);
       }
-    },
-    deleteImage() {
-      this.$emit('update:modelValue', null);
-    },
+    };
+
+    const deleteImage = () => {
+      emit('update:modelValue', null);
+    };
+
+    return { imagePreviewStyle, openFileInput, uploadImage, deleteImage, fileInputRef };
   },
 };
 </script>

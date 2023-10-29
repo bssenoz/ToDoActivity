@@ -73,9 +73,9 @@ const routes = [
     component: () => import('@/layouts/default/Default.vue'),
     children: [
       {
-        path: '/profile/open',
+        path: '/profile/activities',
         name: '',
-        component: () => import('@/views/profile/open.vue'),
+        component: () => import('@/views/profile/activities.vue'),
       },
     ],
   },
@@ -84,9 +84,9 @@ const routes = [
     component: () => import('@/layouts/default/Default.vue'),
     children: [
       {
-        path: '/profile/done',
+        path: '/profile/activities-done',
         name: '',
-        component: () => import('@/views/profile/done.vue'),
+        component: () => import('@/views/profile/activitiesDone.vue'),
       },
     ],
   },
@@ -97,7 +97,7 @@ const routes = [
       {
         path: '/profile/gallery',
         name: '',
-        component: () => import('@/views/profile/gallery.vue'),
+        component: () => import('@/views/profile/userGallery.vue'),
       },
     ],
   },
@@ -108,7 +108,7 @@ const routes = [
       {
         path: '/profile/settings',
         name: '',
-        component: () => import('@/views/profile/settings.vue'),
+        component: () => import('@/views/profile/userSettings.vue'),
       },
     ],
   },
@@ -119,7 +119,7 @@ const routes = [
       {
         path: '/login',
         name: '',
-        component: () => import('@/views/login.vue'),
+        component: () => import('@/views/userLogin.vue'),
       },
     ],
   },
@@ -130,7 +130,7 @@ const routes = [
       {
         path: '/register',
         name: '',
-        component: () => import('@/views/register.vue'),
+        component: () => import('@/views/userRegister.vue'),
       },
     ],
   },
