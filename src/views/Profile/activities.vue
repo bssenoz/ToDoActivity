@@ -3,6 +3,7 @@
   <v-container style="margin-left: 10rem">
     <v-row>
       <v-col>
+
         <h2 class="text-h4 text-success ps-4">
           Planlar:&nbsp;
           <v-fade-transition leave-absolute>
@@ -12,43 +13,17 @@
 
         <v-divider class="mt-4"></v-divider>
 
-
-
         <v-divider class="mb-4"></v-divider>
 
         <v-card v-if="tasks.length > 0">
           <v-slide-y-transition class="py-0" group tag="v-list">
             <template v-for="(task, i) in tasks" :key="`${i}-${task.text}`">
-              <!-- <template v-if="!task.done"> -->
               <v-divider v-if="i !== 0" :key="`${i}-divider`"></v-divider>
               <v-row>
                 <v-col cols="10">
                   <v-list-item>
                     <template v-slot:prepend>
-                      <v-checkbox-btn v-model="task.done" color="grey" @change="onTaskDoneChange(task)">
-                        <v-dialog v-model="task.close" activator="parent" width="auto">
-                          <v-card>
-                            <v-card-title>{{ task.title }}</v-card-title>
-                            <v-card-text>
-                              <ImageUpload @images="emitImages($event)" />
-                            </v-card-text>
-                            <v-card-actions>
-                              <v-btn color="primary" block @click="save(i)">Tamamlandı
-                                <v-dialog v-model="doneDialog" activator="parent" width="auto">
-                                  <v-card>
-                                    <v-card-text>Görev Tamamlandı!</v-card-text>
-                                    <v-card-actions>
-                                      <v-btn color="primary" block @click="close">Tamam</v-btn>
-                                    </v-card-actions>
-                                  </v-card>
-                                </v-dialog>
-                              </v-btn>
-                            </v-card-actions>
-                            <v-card-actions>
-                              <v-btn color="primary" block @click="task.close = false">Kapat</v-btn>
-                            </v-card-actions>
-                          </v-card>
-                        </v-dialog>
+                      <v-checkbox-btn v-model="task.done" color="grey" @change="PatchActivityDone(task)">
                       </v-checkbox-btn>
                     </template>
                     <v-list-item-title>
@@ -62,10 +37,11 @@
                     <v-dialog v-model="task.id" activator="parent" width="auto">
                       <v-card>
                         <v-card-title>{{ task.title }}</v-card-title>
-                        <v-card-text>{{ task.text }}</v-card-text>
+                        <v-card-text v-if="task.text">{{ task.text }}</v-card-text>
                         <v-card-text>
-                          <p>Zaman: {{ task.date }} ({{ task.day }} gün) </p>
-                          <p>Bütçe: {{ task.budget }}₺</p>
+                          <p v-if="task.startTime && task.endTime">Tarihler: {{ task.startTime }} - {{ task.endTime }}</p>
+                          <p v-if="task.dayNumbers">Gün: {{ task.dayNumbers }} gün</p>
+                          <p v-if="task.budget">Bütçe: {{ task.budget }}₺</p>
                           <p>Konum: {{ task.location }} </p>
                         </v-card-text>
                         <v-card-actions>
@@ -108,39 +84,48 @@
 </template>
 
 <script>
-import { ref } from 'vue';
+import axios from 'axios';
+import { ref, onMounted } from 'vue';
 import SideBar from "@/components/SideBar.vue";
 import FormTodo from "@/components/profile/FormToDo.vue";
 import FormUpdate from "@/components/profile/FormUpdate.vue";
-import ImageUpload from "@/components/ImageUpload.vue";
 import SuggestionTask from "@/components/SuggestionTask.vue";
+import Swal from 'sweetalert2';
 
 export default {
   components: {
     SideBar,
     FormTodo,
     FormUpdate,
-    ImageUpload,
     SuggestionTask
   },
+
   setup() {
     const dialog = ref(false);
     const images = ref("");
     const doneDialog = ref(false);
     const imageUpload = ref(false);
 
-    const tasks = ref([
-      {
-        title: "Neque porro",
-        text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras tristique augue porttitor ipsum fringilla, nec dignissim magna lacinia.",
-        date: "Belirsiz",
-        day: "3",
-        budget: "1000-5000",
-        location: "Sakarya",
-        image: [""],
-        done: false,
-      },
-    ]);
+    const tasks = ref([]);
+
+    const GetUserActivitiesNotDone = async () => {
+      try {
+        const token = localStorage.getItem("x-access-token");
+   
+        const response = await axios.get('/api/Activity/GetUserActivitiesNotDone', {
+          headers: {
+            'Authorization': `Bearer ${token}`         
+          },
+        });
+
+        if (response.status === 200) {
+          tasks.value = response.data; 
+          
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
 
     const emitImages = (uploadedImages) => {
       images.value = uploadedImages;
@@ -152,32 +137,53 @@ export default {
       console.log(tasks.value);
     };
 
-    const save = (i) => {
-      tasks.value[i].image = images.value;
-      tasks.value[i].done = true;
-      console.log("xx", tasks.value);
-      dialog.value = false;
-    };
+    const PatchActivityDone = async (task) => {
 
-    const close = () => {
-      console.log(doneDialog.value);
-      doneDialog.value = false;
-      console.log(doneDialog.value);
-      console.log("image:", imageUpload.value);
-      imageUpload.value = false;
-      console.log("image:", imageUpload.value);
-    };
+      await Swal.fire({
+        title: 'Etkinlik tamamlandı mı?',
+        showDenyButton: true,
+        confirmButtonText: 'Evett!',
+        denyButtonText: `Hayır, daha değil :(`,
+      }).then(async (result) => {
 
-    const onTaskDoneChange = (task) => {
-      task.done = !task.done;
+        if (result.isConfirmed) {
 
-      if (task.done) {
-        console.log("Görev işaretlendi:", task);
-      } else {
-        console.log("Görev işaretlenmedi:", task);
-      }
-    };
+          try {
+            const token = localStorage.getItem("x-access-token");
+            const res = await axios.patch(`/api/Activity/ActivityDone/${task.activityId}`, null, {
+              headers: {
+                'Authorization': `Bearer ${token}`
+              },
+            });
 
+            if (res.status === 200) {
+              console.log("Başarılı");
+        
+              const result = await Swal.fire({
+                title: 'Plan tamamlandı.',
+                text: 'Resimlerini eklemeyi unutma!',
+                icon: 'success',
+                confirmButtonText: 'Tamam',
+              });
+              console.log(result);
+            }
+          } catch (err) {
+            console.error(err);
+          }
+        } 
+  });
+
+  if (task.done) {
+    console.log("Görev işaretlendi:", task);
+  } else {
+    console.log("Görev işaretlenmedi:", task);
+  }
+};
+
+ 
+    onMounted(() => {
+      GetUserActivitiesNotDone()
+    })
     return {
       dialog,
       images,
@@ -186,9 +192,8 @@ export default {
       tasks,
       emitImages,
       emitTask,
-      save,
-      close,
-      onTaskDoneChange,
+      PatchActivityDone,
+      GetUserActivitiesNotDone
     };
   },
 };
@@ -199,7 +204,7 @@ export default {
   position: fixed;
   bottom: 10px;
   right: 10px;
-  font-size: 14px; /* Düğme metin boyutunu küçültün */
-  padding: 5px 10px; /* Düğme içeriğini ayarlayın */
+  font-size: 14px;
+  padding: 5px 10px;
 }
 </style>

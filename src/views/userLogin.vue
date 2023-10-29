@@ -29,6 +29,7 @@ import axios from 'axios';
 import { useRouter } from 'vue-router';
 
 export default {
+  name: "UserLogin",
   setup() {
     const router = useRouter();
 

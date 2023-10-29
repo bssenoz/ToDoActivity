@@ -8,7 +8,7 @@
   >
   <template v-slot:item.text="{ item }">
       <span>
-        {{ item.text.length <= 100 ? item.text : item.text.slice(0, 100) + (item.text.length > 100 ? '...' : '') }}
+        <!-- {{ item.text.length <= 100 ? item.text : item.text.slice(0, 100) + (item.text.length > 100 ? '...' : '') }} -->
       </span>
     </template>
 

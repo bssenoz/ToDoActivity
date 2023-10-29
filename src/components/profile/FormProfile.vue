@@ -2,62 +2,87 @@
     <v-container>
       <v-row>
         <v-col>
-          <div v-for="(deger, key) in task" :key="key">
-       
-            <v-row v-if="key == 'name'" @click="duzenleModunuBaslat(key)">
-                <v-col cols="9"><div class="mt-2">
-                    {{ deger }}</div></v-col>
-                <v-col cols="3"><v-list-item prepend-icon="mdi-pencil"></v-list-item></v-col>
-            </v-row>
-            <v-row v-if="key == 'surname'" @click="duzenleModunuBaslat(key)">
-                <v-col cols="9"><div class="mt-2">{{ deger }}</div></v-col>
-                <v-col cols="3"><v-list-item prepend-icon="mdi-pencil"></v-list-item></v-col>
-            </v-row>
+      <v-text-field
+      v-model="user.name"
+      label="Ad"
+      variant="solo" outlined
+    >
+    </v-text-field>
+        <v-text-field
+      v-model="user.surname" outlined
+      label="Soyad"
+      variant="solo"
+    >
+    </v-text-field>
+    <v-text-field
+      v-model="user.email"
+      label="Email"
+      variant="solo" outlined
+    >
+    </v-text-field>
+        <v-text-field type="date"
+      v-model="user.birthDate" outlined
+      label="Doğum Tarihi"
+      variant="solo"
+    >
+    </v-text-field>
 
-            <v-row v-if="key == 'date'" @click="duzenleModunuBaslat(key)">
-                <v-col cols="9"><div class="mt-2">{{ deger }}</div></v-col>
-                <v-col cols="3"><v-list-item prepend-icon="mdi-pencil"></v-list-item></v-col>
-            </v-row>
-            <v-row v-if="key == 'mail'" @click="duzenleModunuBaslat(key)">
-                <v-col cols="9"><div class="mt-2" >{{ deger }}</div></v-col>
-                <v-col cols="3"><v-list-item prepend-icon="mdi-pencil"></v-list-item></v-col>
-            </v-row>
-     
-              
-            <v-text-field
-              v-if="duzenleModu === key"
-              v-model="task[key]"
-              variant="solo"
-              @blur="duzenleModunuBitir(key)"
-            ></v-text-field>
-          </div>
+    <v-text-field
+      v-model="user.location"
+      label="Konum"
+      variant="solo" outlined
+    >
+    </v-text-field>
+
+        <v-btn @click="UpdateUser">Güncelle</v-btn>
         </v-col>
       </v-row>
     </v-container>
   </template>
   
   <script>
-    import { ref } from "vue";
+    import Swal from 'sweetalert2';
+    import axios from 'axios';
+
   export default {
     props: {
-      task: Object,
+      user: Object,
     },
-    setup() {
-      const duzenleModu = ref(null);
-  
-      const duzenleModunuBaslat = (key) => {
-        duzenleModu.value = key;
-        console.log("key: ", key);
-      };
-  
-      const duzenleModunuBitir = (key) => {
-        duzenleModu.value = null;
-      };
+    setup(props) {
+
+      const UpdateUser = async() => {
+        try {
+        const token = localStorage.getItem("x-access-token");
+        const response = await axios.update('',
+        {
+          name: props.user.name,
+          surname: props.user.surname,
+          email: props.user.email,
+          birthDate: props.user.birthDate,
+          location: props.user.location,
+        }, {
+          headers: {
+            'Authorization': `Bearer ${token}`,   
+            'Content-Type': 'application/json'    
+          },
+        });
+
+        if (response.status === 200) {
+          await Swal.fire({
+                title: 'Bilgilerini güncelledin!',
+                icon: 'success',
+                confirmButtonText: 'Tamam',
+              });
+              window.location.reload
+          
+        }
+      } catch (error) {
+        console.log(error);
+      }
+      }
   
       return {
-        duzenleModu,
-        duzenleModunuBaslat,
-        duzenleModunuBitir,
+       UpdateUser
       };
     },
   };

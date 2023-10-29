@@ -5,41 +5,54 @@
       :modules="modules"
       class="mySwiper"
     >
-    <swiper-slide v-for="(plan, index) in plans" :key="index">{{ plan }}</swiper-slide>
+    <swiper-slide v-for="(plan, index) in plans" :key="index">{{ plan.title }}</swiper-slide>
     </swiper>
   </template>
-  <script>
-    // Import Swiper Vue.js components
-    import { Swiper, SwiperSlide } from 'swiper/vue';
-  
-    // Import Swiper styles
-    import 'swiper/css';
-  
-    import 'swiper/css/effect-cards';
 
-  
-    // import required modules
+
+    <script>
+    import { Swiper, SwiperSlide } from 'swiper/vue';
+    import 'swiper/css';
+    import 'swiper/css/effect-cards';
     import { EffectCards } from 'swiper/modules';
-  
+    import axios from 'axios';
+    import { ref, onMounted } from 'vue';
+
     export default {
       components: {
         Swiper,
         SwiperSlide,
       },
       setup() {
+
+const plans = ref([]);
+
+        const GetUserActivitiesNotDone = async () => {
+      try {
+        const token = localStorage.getItem("x-access-token");
+   
+        const response = await axios.get('/api/Activity/GetUserActivitiesNotDone', {
+          headers: {
+            'Authorization': `Bearer ${token}`         
+          },
+        });
+
+        if (response.status === 200) {
+          plans.value = response.data; 
+          
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    onMounted(() => {
+      GetUserActivitiesNotDone()
+    })
+
         return {
+          GetUserActivitiesNotDone,
           modules: [EffectCards],
-          plans: [
-        'Plan 1',
-        'Plan 2',
-        'Plan 3',
-        'Plan 4',
-        'Plan 5',
-        'Plan 6',
-        'Plan 7',
-        'Plan 8',
-        'Plan 9',
-      ],
+          plans
         };
       },
     };

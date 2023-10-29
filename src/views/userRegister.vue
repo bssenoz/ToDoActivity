@@ -35,9 +35,12 @@
   <script>
   import { ref, onMounted } from 'vue';
   import axios from 'axios';
+  import { useRouter } from 'vue-router';
 
   export default {
+    name: "UserRegister",
     setup() {
+      const router = useRouter();
       const backgroundImage = ref('');
       const firstName = ref('');
         const lastName = ref('');
@@ -70,6 +73,7 @@
           }).then((response) => {
             if(response.status===200) {
               console.log(response.data)
+              router.push('/login');
             } else console.log("nooo")
           }).catch((err) => {
             console.log(err)

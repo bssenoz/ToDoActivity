@@ -20,8 +20,8 @@
 
         <v-list density="compact" nav style="height:85vh">
           <a href="/profile"><v-list-item prepend-icon="mdi-home-outline" title="Anasayfa" value="myfiles"></v-list-item></a>
-          <a href="/profile/open"><v-list-item prepend-icon="mdi-checkbox-marked-circle-plus-outline" title="Planlar" value="myfiles"></v-list-item></a>
-          <a href="/profile/done"><v-list-item prepend-icon="mdi-checkbox-marked-circle-outline" title="Tamamlananlar" value="shared"></v-list-item></a>
+          <a href="/profile/activities"><v-list-item prepend-icon="mdi-checkbox-marked-circle-plus-outline" title="Etkinlikler" value="myfiles"></v-list-item></a>
+          <a href="/profile/activities-done"><v-list-item prepend-icon="mdi-checkbox-marked-circle-outline" title="Tamamlanmış Etkinlikler" value="shared"></v-list-item></a>
           <a href="/profile/gallery"><v-list-item prepend-icon="mdi-view-gallery" title="Galeri" value="starred"></v-list-item></a>
         </v-list>
         <v-list-item prepend-icon="mdi-logout" title="Logout" value="starred" ></v-list-item>
