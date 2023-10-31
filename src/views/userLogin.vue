@@ -27,6 +27,7 @@
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
+import Swal from 'sweetalert2';
 
 export default {
   name: "UserLogin",
@@ -61,6 +62,12 @@ export default {
           })
           .catch((err) => {
           console.log(err)
+          Swal.fire({
+                title: 'Hatalı Giriş!',
+                text:'Lütfen şifreni doğru girdiğinden emin ol.',
+                icon: 'error',
+                confirmButtonText: 'Tamam',
+              });
         })
      
     };

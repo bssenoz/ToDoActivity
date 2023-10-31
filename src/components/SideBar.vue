@@ -24,7 +24,7 @@
           <a href="/profile/activities-done"><v-list-item prepend-icon="mdi-checkbox-marked-circle-outline" title="Tamamlanmış Etkinlikler" value="shared"></v-list-item></a>
           <a href="/profile/gallery"><v-list-item prepend-icon="mdi-view-gallery" title="Galeri" value="starred"></v-list-item></a>
         </v-list>
-        <v-list-item prepend-icon="mdi-logout" title="Logout" value="starred" ></v-list-item>
+        <v-list-item prepend-icon="mdi-logout" title="Logout" value="starred" @click="logout"></v-list-item>
         
       </v-navigation-drawer>
 
@@ -34,24 +34,38 @@
 </template>
 
 <script>
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+
 export default {
-  methods: {
-    handleMouseEnter() {
-      // Yan menü üzerine gelindiğinde sidebar genişliğini 300px olarak ayarlayın
-      this.setSidebarWidth(250);
-    },
-    handleMouseLeave() {
-      // Yan menü üzerinden çekildiğinde sidebar genişliğini 100px olarak ayarlayın
-      this.setSidebarWidth(100);
-    },
-    setSidebarWidth(width) {
-      // .sidebar sınıfının genişliğini ayarlayın
+  setup () {
+    const router = useRouter();
+
+    const logout = async() => {
+        const tokenNull = ref('')
+        localStorage.setItem("x-access-token",tokenNull);
+        router.push('/login');
+      };
+   const handleMouseEnter = () => {
+      setSidebarWidth(250);
+    };
+    const handleMouseLeave = () => {
+      setSidebarWidth(100);
+    };
+    const setSidebarWidth = (width) => {
       const sidebar = document.querySelector('.sidebar');
       if (sidebar) {
         sidebar.style.width = `${width}px`;
       }
-    },
-  },
+    };
+    return {
+      handleMouseEnter,
+      handleMouseLeave,
+      setSidebarWidth,
+      logout
+    }
+  }   
+    
 };
 </script>
 
@@ -60,11 +74,11 @@ export default {
   position: fixed;
   top: 0;
   left: 0;
-  height: 100%; /* Yan menünün ekranın tamamını kaplayacak şekilde ayarlayın */
-  width: 100px; /* Yan menünün başlangıç genişliği 100px */
-  background-color: #fff; /* Yan menünün arka plan rengini ayarlayın */
-  z-index: 1; /* Diğer içeriklerin üstünde olduğundan emin olun */
-  overflow-y: auto; /* İçerik ekranın yüksekliğini aşıyorsa kaydırma ekleyin */
+  height: 100%;
+  width: 100px; 
+  background-color: #fff; 
+  z-index: 1; 
+  overflow-y: auto; 
 }
 .v-card--variant-elevated {
   box-shadow: none;
