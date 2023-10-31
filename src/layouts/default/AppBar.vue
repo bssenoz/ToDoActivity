@@ -14,8 +14,7 @@
           >
        
             <template v-slot:activator="{ props }">
-              <!-- Kullanıcı resmini yuvarlak ve küçük boyutta göstermek için v-avatar ve v-img kullanıyoruz -->
-              <v-avatar size="32">
+              <v-avatar size="32" style="cursor:pointer">
                 <v-img
                   src="https://www.befunky.com/images/wp/wp-2021-01-linkedin-profile-picture-after.jpg?auto=avif,webp&format=jpg&width=944"
                   v-bind="props"
@@ -54,17 +53,12 @@
                 </v-row>
                 <v-row>
                   <v-col cols="12">
-                    <v-btn>Logout</v-btn>
+                    <v-btn @click="logout">Logout</v-btn>
                   </v-col>
                 </v-row>
 
               </v-container>
-              <!-- <v-list-item
-                v-for="(item, index) in items"
-                :key="index"
-              >
-                <v-list-item-title>{{ item.title }}</v-list-item-title>
-              </v-list-item> -->
+   
             </v-list>
           </v-menu>
         </div>
@@ -74,15 +68,23 @@
 
 
 <script>
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+
   export default {
-    data: () => ({
-      items: [
-        { title: 'Click Me' },
-        { title: 'Click Me' },
-        { title: 'Click Me' },
-        { title: 'Click Me 2' },
-      ],
-    }),
+    setup() {
+      const router = useRouter();
+
+      const logout = async() => {
+        const tokenNull = ref('')
+        localStorage.setItem("x-access-token",tokenNull);
+        router.push('/login');
+      }
+      return {
+        logout,
+        useRouter
+      }
+    }
   }
 </script>
 

@@ -3,13 +3,12 @@
       <v-row>
         <v-col cols="12" sm="6" >
           <v-card>
-            <v-card-title class="headline">Şifre Değiştir</v-card-title>
+            <v-card-title>Şifre Değiştir</v-card-title>
             <v-card-text>
               <v-form @submit="changePassword">
                 <v-text-field
-                  v-model="currentPassword"
-                  label="Mevcut Şifre"
-                  type="password"
+                  v-model="email"
+                  label="Email"
                   required variant="solo"
                 ></v-text-field>
                 <v-text-field
@@ -24,7 +23,7 @@
                   type="password"
                   required variant="solo"
                 ></v-text-field>
-                <v-btn type="submit" color="primary">Şifre Değiştir</v-btn>
+                <v-btn color="primary" @click="changePassword">Şifre Değiştir</v-btn>
               </v-form>
             </v-card-text>
           </v-card>
@@ -34,41 +33,67 @@
   </template>
   
   <script>
-  export default {
-    data() {
-      return {
-        currentPassword: "",
-        newPassword: "",
-        confirmPassword: "",
-      };
-    },
-    methods: {
-      changePassword() {
-        // Burada şifre değiştirme işlemini gerçekleştirin
-        if (this.newPassword !== this.confirmPassword) {
-          // Yeni şifreler eşleşmiyorsa hata mesajı gösterin veya işlemi iptal edin.
-          console.error("Yeni şifreler eşleşmiyor.");
-          return;
-        }
-        
+  import axios from 'axios';
+  import { ref } from 'vue';
+  import Swal from 'sweetalert2';
 
-        // axios.post("/api/change-password", {
-        //   currentPassword: this.currentPassword,
-        //   newPassword: this.newPassword,
-        // })
-        // .then(response => {
-        //   console.log("Şifre değiştirildi.");
-        // })
-        // .catch(error => {
-        //   console.error("Şifre değiştirme işlemi başarısız oldu.", error);
-        // });
+  export default {
+    setup() {
+      const email = ref('');
+      const newPassword = ref('');
+      const confirmPassword = ref('');
+
+      const changePassword = async() => {
+        
+        const token = localStorage.getItem("x-access-token");
+            axios.post('/api/Authentication/ResetPassword', {
+              Email: email.value,
+              NewPassword: newPassword.value,
+              ConfirmPassword: confirmPassword.value
+            }, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'multipart/form-data'
+            }
+        })
+            .then((res) => {
+            if(res.status === 200) {
+              Swal.fire({
+                title: 'Şifre başarıyla değiştirildi',
+                icon: 'success',
+                confirmButtonText: 'Tamam',
+              });
+            } else {
+              Swal.fire({
+                title: 'Şifre değiştirilemedi!',
+                text: 'Girdiğin şifrelerin aynı olmasına dikkat et.',
+                icon: 'error',
+                confirmButtonText: 'Tamam',
+              });
+            }
+            })
+            .catch((err) => {
+              Swal.fire({
+                title: 'Error',
+                text: err,
+                icon: 'error',
+                confirmButtonText: 'Tamam',
+              });
+            })
   
-        // Şifre değiştirme işlemi tamamlandıktan sonra formu sıfırlayın veya kullanıcıyı başka bir sayfaya yönlendirin.
-        this.currentPassword = "";
-        this.newPassword = "";
-        this.confirmPassword = "";
-      },
-    },
+        email.value = "";
+        newPassword.value = "";
+        confirmPassword.value = "";
+      };
+
+      return {
+        changePassword,
+        confirmPassword,
+        newPassword,
+        email
+      }
+    }
+
   };
   </script>
   

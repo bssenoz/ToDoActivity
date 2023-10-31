@@ -18,8 +18,7 @@
         <v-text-field label="Doğum Tarihi" type="date" outlined variant="solo" v-model="birthDate"></v-text-field>
         <v-text-field label="Şehir" outlined variant="solo" v-model="location"></v-text-field>
         
-
-        
+      
         <v-text-field v-model="password" label="Şifre" type="password" required variant="solo" class="mt-8"></v-text-field>
         <v-text-field v-model="confirmPassword" label="Şifre Tekrar" type="password" required variant="solo"></v-text-field>
         <v-btn color="green-darken-1" variant="text" @click="register" style="width:100%">Kayıt Ol</v-btn>
@@ -36,6 +35,7 @@
   import { ref, onMounted } from 'vue';
   import axios from 'axios';
   import { useRouter } from 'vue-router';
+  import Swal from 'sweetalert2';
 
   export default {
     name: "UserRegister",
@@ -63,7 +63,7 @@
       const register = () => {
         if (password.value === confirmPassword.value) {
           axios.post('/api/Authentication/Register', {
-            name: firstName.value,
+              name: firstName.value,
               surname: lastName.value,
               email: email.value,
               location: location.value,
@@ -72,6 +72,12 @@
               confirmPassword: confirmPassword.value
           }).then((response) => {
             if(response.status===200) {
+              Swal.fire({
+                title: 'Aramıza hoşgeldin!',
+                text:'Hadi giriş yapalım.',
+                icon: 'success',
+                confirmButtonText: 'Tamam',
+              });
               console.log(response.data)
               router.push('/login');
             } else console.log("nooo")

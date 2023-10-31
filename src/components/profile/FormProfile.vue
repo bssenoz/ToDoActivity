@@ -41,25 +41,50 @@
   </template>
   
   <script>
-    import Swal from 'sweetalert2';
-    import axios from 'axios';
+import { ref,onMounted } from "vue";
+  import Swal from 'sweetalert2';
+  import axios from 'axios';
 
   export default {
-    props: {
-      user: Object,
-    },
-    setup(props) {
+    setup() {
+      const user = ref({
+        name: '',
+        surname: '',
+        email: '',
+        birthDate: '',
+        location: ''
+      });
 
+      const getUser = async () => {
+      const token = localStorage.getItem("x-access-token");
+      try {
+        const response = await axios.get('/api/Users/GetUser', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.status === 200) {
+          const userData = response.data;
+        user.value.name = userData.name;
+        user.value.surname = userData.surname;
+        user.value.email = userData.email;
+        user.value.birthDate = userData.birthDate;
+        user.value.location = userData.location;
+       } 
+      } catch (error) {
+        console.error(error);
+      }
+    };
       const UpdateUser = async() => {
         try {
         const token = localStorage.getItem("x-access-token");
-        const response = await axios.update('',
+        const response = await axios.update('/api/Users/UpdateUsers',
         {
-          name: props.user.name,
-          surname: props.user.surname,
-          email: props.user.email,
-          birthDate: props.user.birthDate,
-          location: props.user.location,
+          name: user.value.name,
+          surname: user.value.surname,
+          birthDate: user.value.birthDate,
+          location: user.value.location,
         }, {
           headers: {
             'Authorization': `Bearer ${token}`,   
@@ -80,9 +105,11 @@
         console.log(error);
       }
       }
-  
+      onMounted(() => {
+      getUser()
+    })
       return {
-       UpdateUser
+       UpdateUser,getUser,user
       };
     },
   };

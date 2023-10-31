@@ -44,121 +44,72 @@
 </template>
 
 <script>
-import { ref } from 'vue';
+ import axios from 'axios';
+  import { ref, onMounted } from 'vue';
+  import Swal from 'sweetalert2';
 
 export default {
   setup() {
     const itemsPerPage = ref(10);
     const dialogDelete = ref(false);
     const headers = [
-      { title: 'Mail', align: 'start', key: 'mail', sortable: false },
+      { title: 'Email', align: 'start', key: 'email', sortable: false },
       { title: 'Ad', align: 'end', key: 'name' },
       { title: 'Soyad', align: 'end', key: 'surname' },
-      { title: 'Doğum Tarihi', align: 'end', key: 'birth' },
-      { title: 'Cinsiyet', align: 'end', key: 'gender' },
+      { title: 'Doğum Tarihi', align: 'end', key: 'birthDate' },
+      { title: 'Konum', align: 'end', key: 'locaton' },
       { title: '', align: 'end', key: 'delete' },
     ];
 
-    const users = ref([
-      {
-        name: 'Name',
-        surname: 'Surname',
-        mail: 'name@gmail.com',
-        birth: '01.01.2000',
-        gender: 'Female',
-      },
-      {
-        name: 'Jelly bean',
-        surname: 'Lorem',
-        mail: 'jelly@gmail.com',
-        birth: '09.09.1999',
-        gender: 'Male',
-      },
-      {
-        name: 'KitKat',
-        surname: 518,
-        mail: 26.0,
-        birth: 65,
-        gender: 7,
-      },
-      {
-        name: 'Eclair',
-        surname: 'Ipsum',
-        mail: 'eclair@gmail.com',
-        birth: '03.03.2003',
-        gender: 'Female',
-      },
-      {
-        name: 'Gingerbread',
-        surname: 356,
-        mail: 16.0,
-        birth: 49,
-        gender: 3.9,
-      },
-      {
-        name: 'Ice cream sandwich',
-        surname: 237,
-        mail: 9.0,
-        birth: 37,
-        gender: 4.3,
-      },
-      {
-        name: 'Lollipop',
-        surname: 392,
-        mail: 0.2,
-        birth: 98,
-        gender: 0,
-      },
-      {
-        name: 'Cupcake',
-        surname: 305,
-        mail: 3.7,
-        birth: 67,
-        gender: 4.3,
-      },
-      {
-        name: 'Honeycomb',
-        surname: 408,
-        mail: 3.2,
-        birth: 87,
-        gender: 6.5,
-      },
-      {
-        name: 'Donut',
-        surname: 452,
-        mail: 25.0,
-        birth: 51,
-        gender: 4.9,
-      },
-      {
-        name: 'Name',
-        surname: 'Surname',
-        mail: 'name@gmail.com',
-        birth: '01.01.2000',
-        gender: 'Female',
-      },
-      {
-        name: 'Jelly bean',
-        surname: 'Lorem',
-        mail: 'jelly@gmail.com',
-        birth: '09.09.1999',
-        gender: 'Male',
-      },
-    ]);
+    const users = ref([]);
 
-    const deleteUser = (user) => {
-      const index = users.value.indexOf(user);
-      if (index > -1) {
-        users.value.splice(index, 1);
+    const getUsers = async() => {
+      const token = localStorage.getItem("x-access-token");
+      try {
+        const response = await axios.get('/api/Users/GetAllUsers', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.status === 200) {
+          users.value = response.data
+        } 
+      } catch (error) {
+        console.error(error);
       }
-      dialogDelete.value = false;
     };
+
+    const deleteUser = async (user) => {
+      try {
+        console.log(user.id)
+        const token = localStorage.getItem("x-access-token");
+        const response = await axios.delete(`/api/Users/DeleteUser/${user.id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`           
+          },
+        });
+        if(response.status === 200) {
+          Swal.fire({
+            title: 'Kullanıcı silindi',
+            icon: 'success',
+            confirmButtonText: 'Tamam',
+          });      
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    onMounted(() => {
+      getUsers()
+    })
 
     return {
       itemsPerPage,
       headers,
       users,
       deleteUser,
+      getUsers,
       dialogDelete
     };
   },

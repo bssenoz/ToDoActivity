@@ -11,8 +11,8 @@
             <v-col>
               <div class="user-info">
                 <h2 class="display-1">{{ user.name }} {{ user.surname }}</h2>
-                <p class="subtitle-1">{{ user.mail }}</p>
-                <p class="subtitle-2">{{ user.date }}</p>
+                <p class="subtitle-1">{{ user.email }}</p>
+                <p class="subtitle-2">{{ user.birthDate }}</p>
               </div>
             </v-col>
           </v-row>
@@ -44,7 +44,6 @@
     <v-container class="mt-6">
       <v-row>
           <v-col>
-            <!-- <div class="text-h6 text-center mb-7" >Yapılmayı bekleyen planların var !</div> -->
             <EffectCards />
           </v-col>
           <v-col class="text-h5 d-flex align-center text-center">
@@ -60,37 +59,23 @@
             <EffectCoverflow />
           </v-col>
         </v-row>
-      <!-- <v-row>
-        <v-col>
-          <div class="text-h5 my-3">Bazı anılar</div>
-          <ComplexGridImage />
-        </v-col>
-        <v-col >
-          <Timeline style="float:right"/>
-        </v-col>
-      </v-row> -->
  
-   
-
     </v-container>
   </div>
 </template>
 
 <script>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import SideBar from "@/components/SideBar.vue";
 import SuggestionTask from "@/components/SuggestionTask.vue";
-import Timeline from "@/components/Timeline.vue";
-import ComplexGridImage from "@/components/ComplexGridImage.vue";
 import EffectCoverflow from "@/components/EffectCoverflow.vue";
 import EffectCards from "@/components/EffectCards.vue";
+import axios from 'axios';
 
 export default {
   components: {
     SideBar,
     SuggestionTask,
-    Timeline,
-    ComplexGridImage,
     EffectCoverflow,
     EffectCards
   },
@@ -98,18 +83,47 @@ export default {
     const open = ref(3);
     const done = ref(5);
     const imageCount = ref(15);
-    const user = {
-      name: "Name",
-      surname: "Surname",
-      mail: "mail@gmail.com",
-      date: "01.01.2000"
+    const user = ref({
+      name: '',
+      surname: '',
+      email: '',
+      birthDate: ''
+    });
+
+    const getUser = async () => {
+      const token = localStorage.getItem("x-access-token");
+      try {
+        const response = await axios.get('/api/Users/GetUser', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.status === 200) {
+          console.log(response.data);
+          const birthDate = new Date(response.data.birthDate);
+          const formattedBirthDate = birthDate.toLocaleDateString();
+
+          user.value.name = response.data.name
+          user.value.surname = response.data.surname
+          user.value.email = response.data.email
+          user.value.birthDate = formattedBirthDate
+        } 
+      } catch (error) {
+        console.error(error);
+      }
     };
+
+    onMounted(() => {
+      getUser()
+    })
 
     return {
       open,
       done,
       imageCount,
-      user
+      user,
+      getUser
     };
   },
 };

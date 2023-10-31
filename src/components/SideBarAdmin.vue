@@ -7,24 +7,29 @@
   <v-list-item link title="İstatik"></v-list-item>
   <v-list-item link title="Mesajlar" href="/admin/message"></v-list-item>
 </v-navigation-drawer>
+
 </template>
 
 <script>
+
 export default {
-  
-};
+  setup () {
+  }
+}
 </script>
+
+
 
 <style scoped lang="scss">
 .sidebar {
   position: fixed;
   top: 0;
   left: 0;
-  height: 100%; /* Yan menünün ekranın tamamını kaplayacak şekilde ayarlayın */
-  width: 100px; /* Yan menünün başlangıç genişliği 100px */
-  background-color: #fff; /* Yan menünün arka plan rengini ayarlayın */
-  z-index: 1; /* Diğer içeriklerin üstünde olduğundan emin olun */
-  overflow-y: auto; /* İçerik ekranın yüksekliğini aşıyorsa kaydırma ekleyin */
+  height: 100%; 
+  width: 100px; 
+  background-color: #fff;
+  z-index: 1;
+  overflow-y: auto;
 }
 .v-card--variant-elevated {
   box-shadow: none;
