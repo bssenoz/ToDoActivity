@@ -55,31 +55,31 @@ import { ref,onMounted } from "vue";
         location: ''
       });
 
-      const getUser = async () => {
-      const token = localStorage.getItem("x-access-token");
-      try {
-        const response = await axios.get('/api/Users/GetUser', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+      const GetUser = async () => {
+        const token = localStorage.getItem("x-access-token");
+        try {
+          const response = await axios.get('/api/Users/GetUser', {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
 
-        if (response.status === 200) {
-          const userData = response.data;
-        user.value.name = userData.name;
-        user.value.surname = userData.surname;
-        user.value.email = userData.email;
-        user.value.birthDate = userData.birthDate;
-        user.value.location = userData.location;
-       } 
-      } catch (error) {
-        console.error(error);
-      }
+          if (response.status === 200) {
+            const userData = response.data;
+          user.value.name = userData.name;
+          user.value.surname = userData.surname;
+          user.value.email = userData.email;
+          user.value.birthDate = userData.birthDate;
+          user.value.location = userData.location;
+        } 
+        } catch (error) {
+          console.error(error);
+        }
     };
       const UpdateUser = async() => {
         try {
         const token = localStorage.getItem("x-access-token");
-        const response = await axios.update('/api/Users/UpdateUsers',
+        const response = await axios.put('/api/Users/UpdateUsers',
         {
           name: user.value.name,
           surname: user.value.surname,
@@ -99,17 +99,22 @@ import { ref,onMounted } from "vue";
                 confirmButtonText: 'Tamam',
               });
               window.location.reload
-          
         }
       } catch (error) {
+        await Swal.fire({
+                title: 'Hata!',
+                text: 'Bilgilerini güncelleyemedik :(',
+                icon: 'error',
+                confirmButtonText: 'Tamam',
+              });
         console.log(error);
       }
       }
       onMounted(() => {
-      getUser()
+      GetUser()
     })
       return {
-       UpdateUser,getUser,user
+       UpdateUser,GetUser,user
       };
     },
   };

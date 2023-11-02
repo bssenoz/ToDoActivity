@@ -21,7 +21,7 @@
       
         <v-text-field v-model="password" label="Şifre" type="password" required variant="solo" class="mt-8"></v-text-field>
         <v-text-field v-model="confirmPassword" label="Şifre Tekrar" type="password" required variant="solo"></v-text-field>
-        <v-btn color="green-darken-1" variant="text" @click="register" style="width:100%">Kayıt Ol</v-btn>
+        <v-btn color="green-darken-1" variant="text" @click="Register" style="width:100%">Kayıt Ol</v-btn>
 
     </v-col>
    </v-row>
@@ -60,7 +60,7 @@
         backgroundImage.value = backgrounds[randomIndex];
       };
   
-      const register = () => {
+      const Register = () => {
         if (password.value === confirmPassword.value) {
           axios.post('/api/Authentication/Register', {
               name: firstName.value,
@@ -95,13 +95,13 @@
   
       return {
         backgroundImage,
-        register,
         firstName,
         lastName,
         email,
         birthDate,
         password,
-        confirmPassword
+        confirmPassword,
+        Register,
       };
     },
   };

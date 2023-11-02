@@ -67,7 +67,7 @@
               Swal.fire({
                 title: 'Şifre değiştirilemedi!',
                 text: 'Girdiğin şifrelerin aynı olmasına dikkat et.',
-                icon: 'error',
+                icon: 'warning',
                 confirmButtonText: 'Tamam',
               });
             }

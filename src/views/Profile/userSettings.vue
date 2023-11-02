@@ -16,7 +16,7 @@
       </v-row>
       <v-row>
         <v-col>
-          <v-btn @click="deleteUser">Hesabımı sil</v-btn>
+          <v-btn @click="DeleteUser">Hesabımı sil</v-btn>
         </v-col>
       </v-row>
     </v-container>
@@ -43,52 +43,53 @@
     setup() {
       const user = ref();
       const router = useRouter();
-      const getUser = async () => {
-      const token = localStorage.getItem("x-access-token");
-      try {
-        const response = await axios.get('/api/Users/GetUser', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
 
-        if (response.status === 200) {
-          console.log(response.data);
-          user.value = response.data
-       } 
-      } catch (error) {
-        console.error(error);
-      }
+      const token = localStorage.getItem("x-access-token");
+      
+      const GetUser = async () => {
+        try {
+          const response = await axios.get('/api/Users/GetUser', {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (response.status === 200) {
+            console.log(response.data);
+            user.value = response.data
+        } 
+        } catch (error) {
+          console.error(error);
+        }
     };
 
-      const deleteUser = async() => {
+      const DeleteUser = async() => {
         try {
-        const token = localStorage.getItem("x-access-token");
         const response = await axios.delete('/api/Users/DeleteUser', {
           headers: {
             Authorization: `Bearer ${token}`           
           },
         });
         if(response.status === 200) {
-        const tokenNull = ref('')
-        localStorage.setItem("x-access-token",tokenNull);
-          Swal.fire({
-            title: 'Hesabın silindi',
-            text: 'Hoşçakal, seni özleyeceğiz :(',
-            icon: 'success',
-            confirmButtonText: 'Tamam',
-          });
-          router.push('/login')
+          const tokenNull = ref('')
+          localStorage.setItem("x-access-token",tokenNull);
+            Swal.fire({
+              title: 'Hesabın silindi',
+              text: 'Hoşçakal, seni özleyeceğiz :(',
+              icon: 'success',
+              confirmButtonText: 'Tamam',
+            });
+            router.push('/login')
         }
       } catch (error) {
         console.error(error);
       }
       }
      onMounted(() => {
-      getUser()
+      GetUser()
     })
 
-      return { user, getUser, deleteUser };
+      return { user, GetUser, DeleteUser };
     }
   };
   </script>

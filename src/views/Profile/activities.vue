@@ -39,10 +39,10 @@
                         <v-card-title>{{ task.title }}</v-card-title>
                         <v-card-text v-if="task.text">{{ task.text }}</v-card-text>
                         <v-card-text>
-                          <p v-if="task.startTime && task.endTime">Tarihler: {{ task.startTime }} - {{ task.endTime }}</p>
+                          <p v-if="task.startTime && task.endTime">Tarihler: {{ task.startTime }} / {{ task.endTime }}</p>
                           <p v-if="task.dayNumbers">Gün: {{ task.dayNumbers }} gün</p>
                           <p v-if="task.budget">Bütçe: {{ task.budget }}₺</p>
-                          <p>Konum: {{ task.location }} </p>
+                          <p v-if="task.location">Konum: {{ task.location }} </p>
                         </v-card-text>
                         <v-card-actions>
                           <v-btn color="primary" block>Güncelle
@@ -57,6 +57,9 @@
                           </v-btn>
                         </v-card-actions>
                         <v-card-actions>
+                          <v-btn color="primary" block @click="DeleteActivity(task)">Sil</v-btn>
+                        </v-card-actions>
+                        <v-card-actions>
                           <v-btn color="primary" block @click="task.id = false">Kapat</v-btn>
                         </v-card-actions>
                       </v-card>
@@ -64,13 +67,12 @@
                   </v-btn>
                 </v-col>
               </v-row>
-              <!-- </template> -->
             </template>
           </v-slide-y-transition>
         </v-card>
       </v-col>
       <v-col>
-        <FormTodo @task="emitTask($event)" />
+        <FormTodo @task="EmitTask($event)" />
       </v-col>
     </v-row>
     <div class="suggestion-button">
@@ -101,18 +103,14 @@ export default {
   },
 
   setup() {
-    const dialog = ref(false);
     const images = ref("");
-    const doneDialog = ref(false);
-    const imageUpload = ref(false);
-
     const tasks = ref([]);
+
+    const token = localStorage.getItem("x-access-token");
 
     const GetUserActivitiesNotDone = async () => {
       try {
-        const token = localStorage.getItem("x-access-token");
-   
-        const response = await axios.get('/api/Activity/GetUserActivitiesNotDone', {
+           const response = await axios.get('/api/Activity/GetUserActivitiesNotDone', {
           headers: {
             'Authorization': `Bearer ${token}`         
           },
@@ -120,18 +118,31 @@ export default {
 
         if (response.status === 200) {
           tasks.value = response.data; 
-          
         }
+
       } catch (error) {
+        console.log(error.response)
+        if(error.response.status == 404) {
+          await Swal.fire({
+            title: 'Hiç etkinlik yok!',
+            text: 'Hadi etkinlikler ekleyelim',
+            icon: 'info',
+            confirmButtonText: 'Tamam',
+          });
+        } else {
+          await Swal.fire({
+            title: 'Hata!',
+            text: 'Üzgünüz, şu an işlemini gerçekleştiremiyoruz :(',
+            icon: 'error',
+            confirmButtonText: 'Tamam',
+          });
+        }
         console.log(error);
       }
     };
 
-    const emitImages = (uploadedImages) => {
-      images.value = uploadedImages;
-    };
-
-    const emitTask = (task) => {
+  
+    const EmitTask = (task) => {
       tasks.value.push({ ...task });
       console.log("Eklendi:", task);
       console.log(tasks.value);
@@ -141,15 +152,14 @@ export default {
 
       await Swal.fire({
         title: 'Etkinlik tamamlandı mı?',
+        icon: 'question',
         showDenyButton: true,
         confirmButtonText: 'Evett!',
         denyButtonText: `Hayır, daha değil :(`,
       }).then(async (result) => {
 
         if (result.isConfirmed) {
-
           try {
-            const token = localStorage.getItem("x-access-token");
             const res = await axios.patch(`/api/Activity/ActivityDone/${task.activityId}`, null, {
               headers: {
                 'Authorization': `Bearer ${token}`
@@ -157,27 +167,63 @@ export default {
             });
 
             if (res.status === 200) {
-              console.log("Başarılı");
-        
-              const result = await Swal.fire({
+              await Swal.fire({
                 title: 'Plan tamamlandı.',
                 text: 'Resimlerini eklemeyi unutma!',
                 icon: 'success',
                 confirmButtonText: 'Tamam',
               });
-              console.log(result);
             }
           } catch (err) {
-            console.error(err);
+            await Swal.fire({
+                title: 'Hata!',
+                text: err,
+                icon: 'error',
+                confirmButtonText: 'Tamam',
+              });
           }
-        } 
+        } else {
+          task.done = false
+        }
   });
+};
 
-  if (task.done) {
-    console.log("Görev işaretlendi:", task);
-  } else {
-    console.log("Görev işaretlenmedi:", task);
-  }
+const DeleteActivity = async(task) => {
+  task.id = false
+  await Swal.fire({
+    title: 'Etkinlik kesin olarak silinsin mi?',
+    icon: 'question',
+    showDenyButton: true,
+    confirmButtonText: 'Evet',
+    denyButtonText: 'Hayır, yanlışlıkla bastım ',
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+          try {
+          const response = await axios.delete(`/api/Activity/DeleteUserActivityById/${task.activityId}`, {
+            headers: {
+              'Authorization': `Bearer ${token}`         
+            },
+          });
+    
+          if (response.status === 200) {
+            await Swal.fire({
+              title: 'Etkinliğin başarıyla silindi',
+              text: 'Hadi başka etkinlikler ekle!',
+              icon: "succes",
+              confirmButtonText: 'Tamam',
+            }) 
+          }
+        } catch (error) {
+          await Swal.fire({
+            title: 'Hata!',
+            text: 'Üzgünüm, şu an silemiyoruz.',
+            icon: "error",
+            confirmButtonText: 'Tamam',
+          }) 
+          console.log(error);
+        }
+        }
+      });
 };
 
  
@@ -185,15 +231,12 @@ export default {
       GetUserActivitiesNotDone()
     })
     return {
-      dialog,
       images,
-      doneDialog,
-      imageUpload,
       tasks,
-      emitImages,
-      emitTask,
+      EmitTask,
       PatchActivityDone,
-      GetUserActivitiesNotDone
+      GetUserActivitiesNotDone,
+      DeleteActivity
     };
   },
 };

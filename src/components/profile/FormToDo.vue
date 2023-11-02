@@ -102,7 +102,8 @@ export default {
 
       try {
         const token = localStorage.getItem("x-access-token")
-   
+        if(title.value) {
+
         const response = await axios.post('/api/Activity/CreateActivity', {
           title: title.value,
           text: text.value,
@@ -125,8 +126,16 @@ export default {
           icon: 'success',
           confirmButtonText: 'Tamam',
         });
-        // resetForm()
         window.location.reload();
+      }
+
+        } else {
+          await Swal.fire({
+          title: 'Hata!',
+          text: 'Yeni planın için bir başlık girmelisin.',
+          icon: 'error',
+          confirmButtonText: 'Tamam',
+        });
         }
       } catch(error) {
         console.log(error)

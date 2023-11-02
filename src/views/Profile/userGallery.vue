@@ -17,13 +17,13 @@
                   <v-row>
                     <v-col v-for="(image, index) in images" :key="index" class="d-flex child-flex" cols="3">
                       <v-img
-                        :src="image.src"
+                      v-bind:src="'data:' + image.contentType + ';base64,' + image.imageData"
                         aspect-ratio="1"
                         cover
                         class="bg-grey-lighten-2"
                         @click="showImageInSlider(image)"
                       >
-                        <v-btn :icon="image.liked ? 'mdi-heart' : 'mdi-heart-outline'" @click="toggleHeart(image)"></v-btn>
+                        <v-btn :icon="image.isFavorite ? 'mdi-heart' : 'mdi-heart-outline'" @click="PatchImageFavorite(image)"></v-btn>
                       </v-img>
                     </v-col>
                   </v-row>
@@ -39,13 +39,13 @@
                   <v-row>
                     <v-col v-for="(image, index) in likedImages" :key="index" class="d-flex child-flex" cols="3">
                       <v-img
-                        :src="image.src"
+                      v-bind:src="'data:' + image.contentType + ';base64,' + image.imageData"
                         aspect-ratio="1"
                         cover
                         class="bg-grey-lighten-2"
                         @click="showImageInSlider(image)"
                       >
-                        <v-btn :icon="!image.liked ? 'mdi-heart-outline' : 'mdi-heart'" @click="toggleHeart(image)"></v-btn>
+                        <v-btn :icon="!image.isFavorite ? 'mdi-heart-outline' : 'mdi-heart'" @click="PatchImageFavorite(image)"></v-btn>
                       </v-img>
                     </v-col>
                   </v-row>
@@ -71,7 +71,9 @@
     <!-- Büyük resim gösterme diyalog penceresi -->
     <v-dialog v-model="showImageDialog" max-width="800px">
       <v-card>
-        <v-img :src="selectedImage.src" aspect-ratio="16/9" cover></v-img>
+        <v-img 
+        v-bind:src="'data:' + image.contentType + ';base64,' + image.imageData"
+        aspect-ratio="16/9" cover></v-img>
         <v-card-actions>
           <v-btn @click="showImageDialog = false">Kapat</v-btn>
         </v-card-actions>
@@ -81,9 +83,11 @@
 </template>
 
 <script>
-import { ref, reactive, watch  } from 'vue';
+import { ref, watch, onMounted  } from 'vue';
 import SideBar from '@/components/SideBar.vue';
 import SuggestionTask from "@/components/SuggestionTask.vue";
+import axios from 'axios';
+import Swal from 'sweetalert2';
 
 export default {
   components: {
@@ -95,21 +99,94 @@ export default {
     const selection = ref([]);
     const clickHeart = ref(0);
 
-    const images = reactive([
-      { src: "https://www.oggusto.com/_next/image?url=https%3A%2F%2Fwp.oggusto.com%2Fwp-content%2Fuploads%2F2023%2F03%2Fistanbul-dogaya-kacis.webp&w=3840&q=75", liked: false },
-      { src: "https://3.bp.blogspot.com/-0VR7eRsN86I/T0Syt_XA6tI/AAAAAAAAAsg/foS_sFVYzQ4/s280/31877333XFeUKbSmnr_ph.jpg", liked: false },
-      { src: "https://avatars.mds.yandex.net/i?id=bf421a6a2369d73abc9ac6b617b9bf5345158b31-8963933-images-thumbs&n=13", liked: false },
-      { src: 'https://picsum.photos/500/300?image=15', liked: true },
-      { src: "https://image.posta.com.tr/i/posta/75/750x0/620737e945d2a0c0140d03f5.jpg", liked: false },
-      { src: "https://bigumigu.com/wp-content/uploads/2017/09/66257165859c37e7d497246.21327404.jpg", liked: false },
-      { src: 'https://picsum.photos/500/300?image=11', liked: true },
-    ]);
+    const images = ref([]);
+    const likedImages = ref([]);
 
     const selectedTab = ref(0);
-    const likedImages = ref([]);
     const showImageDialog = ref(false);
     const selectedImage = ref(0);
 
+    const token = localStorage.getItem("x-access-token");
+
+    const GetUserAllImages = async () => {
+  try {
+    const response = await axios.get('/api/Image/GetUserAllImages', {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+    });
+
+    if (response.status === 200) {
+      console.log("Başarılı yanıt:", response.data);
+      images.value = response.data;
+    }
+  } catch (error) {
+    console.error('Hata:', error);
+  }
+};
+
+const GetUserAllFavoriteImages = async () => {
+  try {
+    const response = await axios.get('/api/Image/GetUserAllFavoriteImages', {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+    });
+
+    if (response.status === 200) {
+      console.log("Başarılı yanıt2:", response.data);
+      likedImages.value = response.data;
+    }
+  } catch (error) {
+    console.error('Hata:', error);
+  }
+};
+
+const PatchImageFavorite = async(image) => {
+  if(image.isFavorite) {
+    try {
+            const res = await axios.patch(`/api/Image/ImageMakeNotFavorite/${image.imageId}`, null, {
+              headers: {
+                'Authorization': `Bearer ${token}`
+              },
+            });
+
+            if (res.status === 200) {
+              console.log("not fav")
+            }
+          } catch (err) {
+            await Swal.fire({
+                title: 'Hata!',
+                text: err,
+                icon: 'error',
+                confirmButtonText: 'Tamam',
+              });
+          }
+  }
+  else if(!image.isFavorite) {
+    try {
+            const res = await axios.patch(`/api/Image/ImageMakeFavorite/${image.imageId}`, null, {
+              headers: {
+                'Authorization': `Bearer ${token}`
+              },
+            });
+
+            if (res.status === 200) {
+              console.log("fav")
+            }
+          } catch (err) {
+            await Swal.fire({
+                title: 'Hata!',
+                text: err,
+                icon: 'error',
+                confirmButtonText: 'Tamam',
+              });
+          }
+  } else {
+    console.log("hataaa")
+  }
+      
+};
     const toggleHeart = (image) => {
       image.liked = !image.liked;
       clickHeart.value = 1;
@@ -124,8 +201,12 @@ export default {
     };
 
     const showImageInSlider = (image) => {
+      console.log("showImageSlider")
+      console.log(image)
       if (clickHeart.value == 0) {
-        selectedImage.value = image;
+        console.log("click: 0")
+        console.log("selected: ",selectedImage.value)
+        // selectedImage.value = image;
         showImageDialog.value = true;
       }
       clickHeart.value = 0;
@@ -154,6 +235,12 @@ export default {
         showHearts()
       } 
     });
+
+    onMounted(async () => {
+      await GetUserAllImages();
+      await GetUserAllFavoriteImages();
+    });
+
     return {
       hearts,
       selection,
@@ -166,6 +253,8 @@ export default {
       toggleHeart,
       showImageInSlider,
       showHearts,
+      GetUserAllImages,
+      PatchImageFavorite
     };
   },
 };

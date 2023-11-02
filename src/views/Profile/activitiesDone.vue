@@ -50,7 +50,7 @@
                <v-checkbox-btn v-model="task.done" color="grey" disabled></v-checkbox-btn>
              </template>
  
-             <v-list-item-title @click="activityImages(task.activityId)">
+             <v-list-item-title @click="GetActivityImages(task.activityId)">
                <span :class="task.done ? 'text-grey' : 'text-primary'">{{ task.title }} 
                   </span>
              </v-list-item-title>
@@ -67,7 +67,7 @@
                   <v-card-title>{{ task.title }}</v-card-title>
                         <v-card-text v-if="task.text">{{ task.text }}</v-card-text>
                         <v-card-text>
-                          <p v-if="task.startTime && task.endTime">Tarihler: {{ task.startTime }} - {{ task.endTime }}</p>
+                          <p v-if="task.startTime && task.endTime">Tarihler: {{ task.startTime }} / {{ task.endTime }}</p>
                           <p v-if="task.dayNumbers">Gün: {{ task.dayNumbers }} gün</p>
                           <p v-if="task.budget">Bütçe: {{ task.budget }}₺</p>
                           <p v-if="task.location">Konum: {{ task.location }} </p>
@@ -77,8 +77,8 @@
                               <v-img
                                 v-bind:src="'data:' + image.contentType + ';base64,' + image.imageData"
                                  class="responsive-image" style="width: 100%"
-                                @click="openImageDialog(image)">   
-                              <v-icon class="deleteIcon" @click="deleteImage(image.id)" v-show="showDeleteIcons">mdi-delete</v-icon>
+                                >   
+                              <v-icon class="deleteIcon" @click="DeleteImage(image)" v-show="showDeleteIcons">mdi-delete</v-icon>
                               </v-img>
                             </v-col>
                           </v-row>
@@ -92,21 +92,21 @@
                   </v-card-actions>
                   
                   <v-card-actions>
-                    <v-btn color="primary" block @click="showDeleteIcons = true">Resim Yükle
-                      <v-dialog v-model="task.a" activator="parent" width="auto">
+                    <v-btn color="primary" block >Resim Yükle
+                      <v-dialog v-model="task.id" activator="parent" width="auto">
                         <v-card>
                           <v-card-text class="mt-8">
                             <ImageUpload :task="task"/>
                           </v-card-text>
                           <v-card-actions>
-                            <v-btn color="primary" block @click="task.a = false">Kapat</v-btn>
+                            <v-btn color="primary" block @click="task.id = false">Kapat</v-btn>
                           </v-card-actions>
                         </v-card>
                       </v-dialog>
                     </v-btn>
                   </v-card-actions>
                   <v-card-actions>
-                    <v-btn color="primary" block @click="task.control = false">Kapat</v-btn>
+                    <v-btn color="primary" block @click="closeDialogAndReset(task)" >Kapat</v-btn>
                   </v-card-actions>
                 </v-card>
               </v-dialog>
@@ -150,20 +150,6 @@
   </v-card>
 </v-dialog>
 
-          <!-- <div class="image-container mt-6">
-                      <v-row>
-                        <v-col v-for="(image, index) in task.images" :key="index" cols="2">
-                          <v-img v-if="image" :src="image" class="responsive-image">
-                            <v-icon class="deleteIcon" @click="deleteImage(index, task)" v-show="showDeleteIcons">mdi-delete</v-icon>
-                          </v-img>
-                        </v-col>
-                      </v-row>
-                    </div> -->
-
-                    <!-- <ImageShow /> -->
-
-<!-- <imageSlider /> -->
-
       </v-col>
     </v-row>
     <div class="suggestion-button">
@@ -179,17 +165,16 @@
 <script>
 import SideBar from '@/components/SideBar.vue';
 import ImageUpload from '@/components/ImageUpload.vue';
-// import ImageShow from '@/components/ImageShow.vue';
 import { GoogleMap, Marker } from "vue3-google-map";
 import SuggestionTask from "@/components/SuggestionTask.vue";
 import axios from 'axios';
 import { ref, onMounted } from 'vue';
+import Swal from 'sweetalert2';
 
 export default {
   components: {
     SideBar,
     ImageUpload,
-    // ImageShow,
     GoogleMap,
     Marker,
     SuggestionTask
@@ -208,25 +193,13 @@ export default {
 
     const center = { lat: 40, lng: 35 };
     const apiKey = process.env.GOOGLE_MAP_API_KEY;
+    const token = localStorage.getItem("x-access-token");
 
-    const activityImages = async (activityId) => {
-      console.log("activityId: ",activityId)
-      try {
-        const token = localStorage.getItem("x-access-token");
-        const response = await axios.get(`/api/Image/GetActivityImagesById/${activityId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`           
-          },
-        });
-        if(response.status === 200) {
-          images.value = response.data;
-          console.log(images.value);       
-        }
-      } catch (error) {
-        console.error('API isteği başarısız: ', error);
-      }
+    const closeDialogAndReset = (task) => {
+      task.control = false;
+      showDeleteIcons.value = false;
     };
-
+ 
     const openMarkerDialog = (location) => {
       selectedMarkerLocation.value = location.location;
       getMarkersByLocation();
@@ -244,25 +217,7 @@ export default {
       selectedMarker.value = null;
     };
 
-    const deleteImage = async (imageId) => {
-      try {
-        console.log("delete: imageId: ",imageId)
-        const token = localStorage.getItem("x-access-token");
-        const response = await axios.delete(`/api/Image/DeleteImage/${imageId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`           
-          },
-        });
-        if(response.status === 200) {
-          images.value = response.data;
-          console.log(images.value);       
-        }
-      } catch (error) {
-        console.error('API isteği başarısız: ', error);
-      }
-    };
-
-    const deleteIcon = () => {
+        const deleteIcon = () => {
       showDeleteIcons.value = true;
     };
 
@@ -279,10 +234,25 @@ export default {
         });
       }
     };
-    const fetchDataFromApi = async () => {
-
+    const GetActivityImages = async (activityId) => {
+      console.log("activityId: ",activityId)
       try {
-        const token = localStorage.getItem("x-access-token");
+        const response = await axios.get(`/api/Image/GetActivityImagesById/${activityId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`           
+          },
+        });
+        if(response.status === 200) {
+          images.value = response.data;
+          console.log(images.value);       
+        }
+      } catch (error) {
+        console.error('API isteği başarısız: ', error);
+      }
+    };
+
+    const GetUserActivitiesDone = async () => {
+      try {
         const response = await axios.get('/api/Activity/GetUserActivitiesDone', {
           headers: {
             Authorization: `Bearer ${token}`            
@@ -294,9 +264,37 @@ export default {
         console.error('API isteği başarısız: ', error);
       }
     };
+
+    const DeleteImage = async (image) => {
+      await Swal.fire({
+        title: 'Resmin silinsin mi?',
+        icon: 'question',
+        showDenyButton: true,
+        confirmButtonText: 'Evet',
+        denyButtonText: 'Hayır',
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+        try {
+          console.log(image.imageId)
+          await axios.delete(`/api/Image/DeleteImage/${image.imageId}`, {
+            headers: {
+              Authorization: `Bearer ${token}`           
+            },
+          });
+        } catch (error) {
+          await Swal.fire({
+            title: 'Hata!',
+            text: error,
+            icon: 'error',
+            confirmButtonText: 'Tamam',
+          })
+        }
+      }
+    });
+    };
     
     onMounted(() => {
-      fetchDataFromApi();
+      GetUserActivitiesDone();
     })
 
 
@@ -306,6 +304,7 @@ export default {
       selectedMarkerLocation,
       filteredMarkers,
       showDeleteIcons,
+      closeDialogAndReset,
       tasks,
       newTask,
       locations,
@@ -313,12 +312,11 @@ export default {
       apiKey,
       openMarkerDialog,
       closeMarkerDialog,
-      deleteImage,
       deleteIcon,
-      // showImageInSlider,
       getMarkersByLocation,
-      activityImages,
       images,
+      DeleteImage,
+      GetActivityImages,
     };
   },
 };

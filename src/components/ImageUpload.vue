@@ -1,14 +1,14 @@
 <template>
   <div>
     <h2>Resim Yükle!</h2>
-    <form @submit.prevent="uploadImage">
+    <form @submit.prevent="PostAddImage">
       <input
       type="file" id="images" multiple @change="handleFileChange"
       variant="solo" class="custom-file-input"/>
 
         <v-textarea v-model="addImageDTO.Text" label="Açıklama" variant="solo"></v-textarea>
       <div>
-        <v-btn @click="uploadImage">Resmi Yükle</v-btn>
+        <v-btn @click="PostAddImage">Resmi Yükle</v-btn>
       </div>
 
     </form>
@@ -37,31 +37,14 @@ export default {
       addImageDTO.Images = e.target.files;
     };
 
-    const goster = async () => {
-      try {
-        const response = await axios.get(`/api/Image/GetActivityImagesById/${props.task.activityId}`, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
+    const PostAddImage = async () => {
+      const dialogs = document.querySelectorAll('.v-overlay__content');
+      if (dialogs.length > 0) {
+        dialogs.forEach(dialog => {
+          dialog.style.zIndex = -2;
         });
-
-        if (response.status === 200) {
-          console.log('Resim başarıyla yüklendi.');
-          const result = await Swal.fire({
-                title: 'Resim eklendi!',
-                icon: 'success',
-                confirmButtonText: 'Tamam',
-              });
-              console.log(result);
-        } else {
-          console.error('Resim yükleme hatası.');
-        }
-      } catch (error) {
-        console.error('Bir hata oluştu: ', error);
       }
-    };
 
-    const uploadImage = async () => {
       const formData = new FormData();
       //düzeltme gerekli!
       //clerable özelliği bak
@@ -83,26 +66,45 @@ export default {
         });
 
         if (response.status === 200) {
-          console.log('Resim başarıyla yüklendi.');
-        } else {
-          console.error('Resim yükleme hatası.');
+          await Swal.fire({
+            title: 'Resim eklendi!',
+            icon: 'success',
+            confirmButtonText: 'Tamam',
+            didOpen: () => {
+              const swalCont = document.querySelector('.swal2-container');
+              swalCont.style.zIndex = 10000;
+            },
+          }).then(() => {
+            dialogs[0].style.zIndex = 0;
+          });
         }
       } catch (error) {
-        console.error('Bir hata oluştu: ', error);
+        await Swal.fire({
+            title: 'Resmini ekleyemedik!',
+            text: 'Üzgünüz, bir hata oluştu.',
+            icon: 'error',
+            confirmButtonText: 'Tamam',
+            didOpen: () => {
+              const swalCont = document.querySelector('.swal2-container');
+              swalCont.style.zIndex = 10000;
+            },
+          }).then(() => {
+            dialogs[0].style.zIndex = 0;
+          })
+        console.error(error);
       }
     };
 
     return {
       addImageDTO,
       handleFileChange,
-      goster,
-      uploadImage,
+      PostAddImage,
     };
   },
 };
 </script>
 
-<style scoped>
+<style >
 input[type="file"] {
   cursor: pointer !Important;
   font: 300 14px sans-serif;

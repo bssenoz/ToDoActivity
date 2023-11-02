@@ -74,10 +74,12 @@ export default {
     const uncertain = {title: 'Belirsiz',value: false};
     const dateOptions = [certain, uncertain];
 
+    const token = localStorage.getItem("x-access-token");
+ 
  const UpdateActivity = async () => {
-  try {
-        const token = localStorage.getItem("x-access-token");
-    
+   const dialogs = document.querySelectorAll('.v-overlay__content');
+  
+   try {
         const response = await axios.put(`/api/Activity/UpdateActivity/${props.task.activityId}`,
         {
           title: props.task.title,
@@ -100,12 +102,35 @@ export default {
                 title: 'Planını güncelledin!',
                 icon: 'success',
                 confirmButtonText: 'Tamam',
-              });
-              window.location.reload
-          
+                didOpen: () => {
+                 const swalCont = document.querySelector('.swal2-container');
+
+                  if (dialogs.length > 0) {
+                    dialogs.forEach(dialog => {
+                      dialog.style.zIndex = -2;
+                    });
+                  }
+              swalCont.style.zIndex = 10000;
+            },
+          }).then(() => {
+            dialogs[0].style.zIndex = 0;
+            window.location.reload
+          });
         }
       } catch (error) {
-        console.log(error);
+        await Swal.fire({
+            title: 'Planını güncelleyemedik!',
+            text: 'Üzgünüz, bir hata oluştu.',
+            icon: 'error',
+            confirmButtonText: 'Tamam',
+            didOpen: () => {
+              const swalCont = document.querySelector('.swal2-container');
+              swalCont.style.zIndex = 10000;
+            },
+          }).then(() => {
+            dialogs[0].style.zIndex = 0;
+          })
+        console.error(error);
       }
  }
    

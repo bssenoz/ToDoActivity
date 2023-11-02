@@ -90,7 +90,7 @@ export default {
       birthDate: ''
     });
 
-    const getUser = async () => {
+    const GetUser = async () => {
       const token = localStorage.getItem("x-access-token");
       try {
         const response = await axios.get('/api/Users/GetUser', {
@@ -115,7 +115,7 @@ export default {
     };
 
     onMounted(() => {
-      getUser()
+      GetUser()
     })
 
     return {
@@ -123,7 +123,7 @@ export default {
       done,
       imageCount,
       user,
-      getUser
+      GetUser
     };
   },
 };

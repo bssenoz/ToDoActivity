@@ -14,7 +14,7 @@
   <v-col>
       <v-text-field label="Mail" outlined variant="solo" v-model="email"></v-text-field>
       <v-text-field v-model="password" label="Şifre" type="password" required variant="solo"></v-text-field>
-      <v-btn color="blue-darken-1" variant="text" @click="login" style="width:100%">Giriş Yap</v-btn>
+      <v-btn color="blue-darken-1" variant="text" @click="Login" style="width:100%">Giriş Yap</v-btn>
   </v-col>
  </v-row>
         </div>
@@ -48,7 +48,7 @@ export default {
       backgroundImage.value = backgrounds[randomIndex];
     };
 
-    const login = () => {
+    const Login = () => {
         axios.post('/api/Authentication/Login', {
             email: email.value,
             password: password.value,
@@ -65,7 +65,7 @@ export default {
           Swal.fire({
                 title: 'Hatalı Giriş!',
                 text:'Lütfen şifreni doğru girdiğinden emin ol.',
-                icon: 'error',
+                icon: 'warning',
                 confirmButtonText: 'Tamam',
               });
         })
@@ -78,9 +78,9 @@ export default {
 
     return {
       backgroundImage,
-      login,
       email,
       password,
+      Login
     };
   },
 };
