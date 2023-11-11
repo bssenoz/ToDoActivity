@@ -70,7 +70,7 @@ import SideBar from "@/components/SideBar.vue";
 import SuggestionTask from "@/components/SuggestionTask.vue";
 import EffectCoverflow from "@/components/EffectCoverflow.vue";
 import EffectCards from "@/components/EffectCards.vue";
-import axios from 'axios';
+import { useStore } from 'vuex';
 
 export default {
   components: {
@@ -80,50 +80,27 @@ export default {
     EffectCards
   },
   setup() {
+    const store = useStore();
     const open = ref(3);
     const done = ref(5);
     const imageCount = ref(15);
-    const user = ref({
-      name: '',
-      surname: '',
-      email: '',
-      birthDate: ''
-    });
+    const user = ref(store.getters.user);
 
-    const GetUser = async () => {
-      const token = localStorage.getItem("x-access-token");
-      try {
-        const response = await axios.get('/api/Users/GetUser', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (response.status === 200) {
-          console.log(response.data);
-          const birthDate = new Date(response.data.birthDate);
-          const formattedBirthDate = birthDate.toLocaleDateString();
-
-          user.value.name = response.data.name
-          user.value.surname = response.data.surname
-          user.value.email = response.data.email
-          user.value.birthDate = formattedBirthDate
-        } 
-      } catch (error) {
-        console.error(error);
-      }
-    };
+    const fetchUser = async () => {
+          await store.dispatch('getUser');
+          user.value = store.getters.user;
+        };
 
     onMounted(() => {
-      GetUser()
-    })
-
+      fetchUser();
+    });
+    
     return {
       open,
       done,
       imageCount,
       user,
-      GetUser
+      fetchUser
     };
   },
 };
@@ -136,12 +113,11 @@ export default {
   margin-bottom: 10px;
 }
 
-/* Düğmeyi sağ alt köşeye sabitleyin ve boyutunu küçültün */
 .suggestion-button {
   position: fixed;
   bottom: 10px;
   right: 10px;
-  font-size: 14px; /* Düğme metin boyutunu küçültün */
-  padding: 5px 10px; /* Düğme içeriğini ayarlayın */
+  font-size: 14px;
+  padding: 5px 10px; 
 }
 </style>
