@@ -29,6 +29,7 @@
     "vue3-google-map": "^0.17.1",
     "vue3-leaflet": "^1.0.46",
     "vuetify": "^3.3.4",
+    "vuex": "^4.1.0",
     "webfontloader": "^1.0.0"
   },
   "devDependencies": {

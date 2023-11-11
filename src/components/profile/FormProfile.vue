@@ -44,77 +44,69 @@
 import { ref,onMounted } from "vue";
   import Swal from 'sweetalert2';
   import axios from 'axios';
+  import { useStore } from 'vuex';
 
   export default {
     setup() {
-      const user = ref({
-        name: '',
-        surname: '',
-        email: '',
-        birthDate: '',
-        location: ''
+      const store = useStore();
+      const user = ref(store.getters.user);
+
+    const fetchUser = async () => {
+          await store.dispatch('getUser');
+          user.value = store.getters.user;
+        };
+    const UpdateUser = async () => {
+  try {
+    const token = localStorage.getItem("x-access-token");
+    console.log(token)
+    console.log(user.value.surname)
+    console.log(user.value.birthDate)
+    
+    const response = await axios.put('/api/Users/UpdateUser', {
+      name: user.value.name,
+      surname: user.value.surname,
+      birthDate: user.value.birthDate,
+      location: user.value.location,
+    }, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+    });
+
+    if (response.status === 200) {
+      // Mutasyon çağrısı
+      store.commit('setUser', {
+        name: user.value.name,
+        surname: user.value.surname,
+        email: user.value.email,
+        birthDate: user.value.birthDate,
+        location: user.value.location,
       });
 
-      const GetUser = async () => {
-        const token = localStorage.getItem("x-access-token");
-        try {
-          const response = await axios.get('/api/Users/GetUser', {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
+      await Swal.fire({
+        title: 'Bilgilerini güncelledin!',
+        icon: 'success',
+        confirmButtonText: 'Tamam',
+      });
+      window.location.reload();
+    }
+  } catch (error) {
+    await Swal.fire({
+      title: 'Hata!',
+      text: 'Bilgilerini güncelleyemedik :(',
+      icon: 'error',
+      confirmButtonText: 'Tamam',
+    });
+    console.log(error);
+  }
+};
 
-          if (response.status === 200) {
-            const userData = response.data;
-          user.value.name = userData.name;
-          user.value.surname = userData.surname;
-          user.value.email = userData.email;
-          user.value.birthDate = userData.birthDate;
-          user.value.location = userData.location;
-        } 
-        } catch (error) {
-          console.error(error);
-        }
-    };
-      const UpdateUser = async() => {
-        try {
-        const token = localStorage.getItem("x-access-token");
-        const response = await axios.put('/api/Users/UpdateUsers',
-        {
-          name: user.value.name,
-          surname: user.value.surname,
-          birthDate: user.value.birthDate,
-          location: user.value.location,
-        }, {
-          headers: {
-            'Authorization': `Bearer ${token}`,   
-            'Content-Type': 'application/json'    
-          },
-        });
-
-        if (response.status === 200) {
-          await Swal.fire({
-                title: 'Bilgilerini güncelledin!',
-                icon: 'success',
-                confirmButtonText: 'Tamam',
-              });
-              window.location.reload
-        }
-      } catch (error) {
-        await Swal.fire({
-                title: 'Hata!',
-                text: 'Bilgilerini güncelleyemedik :(',
-                icon: 'error',
-                confirmButtonText: 'Tamam',
-              });
-        console.log(error);
-      }
-      }
       onMounted(() => {
-      GetUser()
-    })
+      fetchUser();
+    });
       return {
-       UpdateUser,GetUser,user
+       UpdateUser,fetchUser,user
       };
     },
   };

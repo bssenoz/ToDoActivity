@@ -28,6 +28,7 @@ import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
 import Swal from 'sweetalert2';
+import store from '@/store/index';
 
 export default {
   name: "UserLogin",
@@ -56,6 +57,7 @@ export default {
             if (res.status === 200) {
               const token = res.data.jwtTokenDTO.accessToken;
               localStorage.setItem("x-access-token",token);
+              store.commit('setAccessToken', token);
               res.headers["authorization"] = `Bearer ${token}`;
               router.push('/profile');
             }
