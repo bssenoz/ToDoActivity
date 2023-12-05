@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <default-bar />
+    <!-- <default-bar /> -->
 
     <default-view />
     <Footer/>
