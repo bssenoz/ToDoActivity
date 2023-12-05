@@ -1,22 +1,25 @@
 <template>
-  <v-container style="max-width:500px">
+  <v-container>
     <v-row>
-     <v-col><div class="text-h5">Plan Ekle!</div></v-col>
+     <v-col><div class="text-h5 mb-4">Plan Ekle!</div></v-col>
     </v-row>
     <v-row>
-      <v-col>
+      <v-col cols="12">
          <v-text-field
       v-model="title"
       label="Başlık"
       variant="solo"
     >
     </v-text-field>
+  </v-col>
+<v-col cols="12"> 
         <v-text-field
       v-model="text"
       label="İçerik"
       variant="solo"
     >
-    </v-text-field>
+    </v-text-field>  </v-col>
+<v-col cols="12"> 
 
 <v-select
           label="Tarih"
@@ -26,21 +29,28 @@
           item-value="value"
           variant="solo"
         ></v-select>
+      </v-col>
+<v-col cols="6"> 
+  <v-text-field v-if="timed === certain.value"
+  v-model="startTime"
+  label="Başlangıç Tarihi"
+  type="date"
+  variant="solo"
+  >
+  </v-text-field>
+</v-col>
+<v-col cols="6"> 
 
-<v-text-field v-if="timed === certain.value"
-v-model="startTime"
-label="Başlangıç Tarihi"
-type="date"
-variant="solo"
->
-</v-text-field>
-<v-text-field v-if="timed === certain.value"
-      v-model="endTime"
-      label="Bitiş Tarihi"
-      type="date"
-      variant="solo"
-    >
-    </v-text-field>
+  <v-text-field v-if="timed === certain.value"
+        v-model="endTime"
+        label="Bitiş Tarihi"
+        type="date"
+        variant="solo"
+      >
+      </v-text-field>
+
+</v-col>
+<v-col cols="6"> 
 
     <v-text-field
       v-model="location"
@@ -48,6 +58,8 @@ variant="solo"
       variant="solo"
     >
     </v-text-field>
+  </v-col>
+  <v-col cols="6"> 
 
     <v-text-field
       v-model="budget"
@@ -172,3 +184,9 @@ export default {
 }
 
 </script>
+
+<style scoped>
+.v-col {
+  margin-top: -1rem;
+}
+</style>

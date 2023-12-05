@@ -1,8 +1,19 @@
 <template>
   <SideBar />
-  <v-container style="margin-left: 10rem">
+  <v-container fluid>
     <v-row>
-      <v-col>
+      <v-col v-if="!showForm" cols="2" style="margin-left:5rem">
+        <h2 class="text-h4">
+         filtreleme
+        </h2>
+        <h2 class="text-h4">
+         filtreleme
+        </h2>
+        <h2 class="text-h4">
+         filtreleme
+        </h2>
+      </v-col>
+      <v-col :style="{ 'margin-left': showForm ? '6rem' : '9rem', height: '90vh' }" :cols="showForm ? 6 : 7">
 
         <h2 class="text-h4 text-success ps-4">
           Planlar:&nbsp;
@@ -15,12 +26,12 @@
 
         <v-divider class="mb-4"></v-divider>
 
-        <v-card v-if="tasks.length > 0">
+        <v-card v-if="tasks.length > 0" class="scrollable-content">
           <v-slide-y-transition class="py-0" group tag="v-list">
             <template v-for="(task, i) in tasks" :key="`${i}-${task.text}`">
               <v-divider v-if="i !== 0" :key="`${i}-divider`"></v-divider>
               <v-row>
-                <v-col cols="10">
+                <v-col cols="9">
                   <v-list-item>
                     <template v-slot:prepend>
                       <v-checkbox-btn v-model="task.done" color="grey" @change="PatchActivityDone(task)">
@@ -31,7 +42,7 @@
                     </v-list-item-title>
                   </v-list-item>
                 </v-col>
-                <v-col cols="2">
+                <v-col cols="3" style="text-align:center">
                   <v-btn color="primary mt-2">
                     Detay
                     <v-dialog v-model="task.id" activator="parent" width="auto">
@@ -70,10 +81,21 @@
             </template>
           </v-slide-y-transition>
         </v-card>
+
       </v-col>
-      <v-col>
-        <FormTodo @task="EmitTask($event)" />
+      <v-col cols="1" v-if="showForm">
+        <v-icon icon="mdi-menu-left" style="font-size:5rem;position: absolute; top: 40%; transform: translateY(-50%);" @click="toggleForm"/>
+      </v-col>      
+      <v-col cols="1" v-if="!showForm">
+        <v-icon icon="mdi-menu-right" style="font-size:5rem;position: absolute; top: 40%; transform: translateY(-50%);" @click="toggleForm"/>
       </v-col>
+      <v-col v-if="showForm" cols="4"
+          style="height:90vh;text-align:center;display:flex;justify-content: center;align-items: center;"
+          class="form-col-transition"
+        >
+          <FormTodo @task="EmitTask($event)" />
+        </v-col>
+ 
     </v-row>
     <div class="suggestion-button">
         <v-row>
@@ -140,7 +162,11 @@ export default {
         console.log(error);
       }
     };
+    const showForm = ref(true);
 
+const toggleForm = () => {
+  showForm.value = !showForm.value;
+};
   
     const EmitTask = (task) => {
       tasks.value.push({ ...task });
@@ -236,7 +262,9 @@ const DeleteActivity = async(task) => {
       EmitTask,
       PatchActivityDone,
       GetUserActivitiesNotDone,
-      DeleteActivity
+      DeleteActivity,
+      showForm,
+      toggleForm,
     };
   },
 };
@@ -249,5 +277,30 @@ const DeleteActivity = async(task) => {
   right: 10px;
   font-size: 14px;
   padding: 5px 10px;
+}
+
+.form-toggle-btn {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+}
+
+.scrollable-content {
+  overflow-y: auto;
+  max-height: 78vh; 
+}
+
+.scrollable-content::-webkit-scrollbar {
+  width: 5px;
+}
+
+.scrollable-content::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 6px;
+}
+
+.scrollable-content::-webkit-scrollbar-track {
+  background-color: #eee;
+  border-radius: 5px;
 }
 </style>
