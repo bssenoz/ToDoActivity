@@ -16,11 +16,11 @@
 
         <v-divider></v-divider>
 
-        <v-list density="compact" nav style="height:60vh" lines="two">
+        <v-list density="compact" nav style="height:57vh" lines="two">
           <a href="/"><v-list-item prepend-icon="mdi-home-outline" title="Anasayfa" value="myfiles"></v-list-item></a>
           <a href="/profile"><v-list-item prepend-icon="mdi-account" title="Profil" value="myfiles"></v-list-item></a>
           <a href="/profile/activities"><v-list-item prepend-icon="mdi-airplane-plus" title="Etkinlikler" value="myfiles"></v-list-item></a>
-          <a href="/profile/activities-done"><v-list-item prepend-icon="mdi-airplane-check" title="Tamamlanmış Etkinlikler" value="shared"></v-list-item></a>
+          <a href="/profile/activities-done"><v-list-item prepend-icon="mdi-airplane-check" title="Tamamlanan Etkinlikler" value="shared"></v-list-item></a>
           <a href="/profile/gallery"><v-list-item prepend-icon="mdi-image-marker-outline" title="Galeri" value="starred"></v-list-item></a>
           <a href="/profile/settings"><v-list-item prepend-icon="mdi-account-cog" title="Ayarlar" value="starred"></v-list-item></a>
 
@@ -76,7 +76,7 @@ export default {
   top: 0;
   left: 0;
   height: 100%;
-  width: 250px; 
+  width: 230px; 
   background-color: #d21e1e; 
   z-index: 1; 
   overflow-y: auto; 
@@ -93,12 +93,11 @@ a {
 
 }
     ::v-deep(.v-list-item__content) {
-      // color:green;
-
+      margin-left:-1rem;
     }
 ::v-deep(.v-list-item--nav) {
   .v-list-item-title {
-      font-size:.9rem;
+      font-size:.85rem;
   }
 }
 </style>

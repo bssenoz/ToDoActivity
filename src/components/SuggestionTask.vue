@@ -1,5 +1,5 @@
 <template>
-<v-btn block class="custom-small-button">Etkinlik Öner!
+<v-btn color="info" block class="custom-small-button">Etkinlik Öner!
       <v-dialog v-model="doneDialog" activator="parent" >
         <v-card class="pa-4">
             <div class="text-h6 mt-2 mb-2" >Filtreleme yapalım!</div>

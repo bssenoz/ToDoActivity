@@ -1,6 +1,6 @@
 <template>
   <SideBar />
-  <v-container fluid>
+  <v-container>
     <v-row>
       <v-col v-if="!showForm" cols="2" style="margin-left:5rem">
         <h2 class="text-h4">
@@ -13,7 +13,7 @@
          filtreleme
         </h2>
       </v-col>
-      <v-col :style="{ 'margin-left': showForm ? '6rem' : '9rem', height: '90vh' }" :cols="showForm ? 6 : 7">
+      <v-col :style="{ 'margin-left': showForm ? '6rem' : '9rem', height: '90vh' }" :cols="showForm ? 5 : 7">
 
         <h2 class="text-h4 text-success ps-4">
           Planlar:&nbsp;

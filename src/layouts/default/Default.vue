@@ -2,7 +2,7 @@
   <v-app>
     <!-- <default-bar /> -->
 
-    <default-view />
+    <default-view style="margin-left:12rem;padding-right:10rem"/>
     <Footer/>
   </v-app>
 </template>

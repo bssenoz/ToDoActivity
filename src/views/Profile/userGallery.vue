@@ -2,7 +2,7 @@
   <div>
     <SideBar />
     
-    <v-container style="width:1200px">
+    <v-container style="margin-left:4rem">
       <v-row>
         <v-col cols="12">
           <v-tabs v-model="selectedTab">

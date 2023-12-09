@@ -1,6 +1,6 @@
 <template>
     <SideBar />
-    <v-container style="margin-left: 10rem">
+    <v-container>
       <v-row>
        <v-col cols="4">
         <ChangeProfileImage/>
