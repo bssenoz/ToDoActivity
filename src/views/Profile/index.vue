@@ -6,61 +6,48 @@
        <v-col class="ml-8">
         <v-card class="ml-8">
           <div style="background-color: aqua;height:250px">
-            <v-img src="https://www.befunky.com/images/wp/wp-2021-01-linkedin-profile-picture-after.jpg?auto=avif,webp&format=jpg&width=944" 
-            width="200px" style="float:right;border-radius:50%;margin-top:8rem;margin-right:2rem;"/>
+            <div style="float:right;margin-top:15%;margin-right:.9rem">
+              <v-img src="https://www.befunky.com/images/wp/wp-2021-01-linkedin-profile-picture-after.jpg?auto=avif,webp&format=jpg&width=944" 
+              width="200px" style="border-radius:50%;"/>
+              <div class="user text-center my-2">
+                <div class="text-h5">Buse Şenöz</div>
+                <div class="text-body-1">Antalya</div>
+              </div>
+            </div>
           </div>
           <v-row>
-            <v-col cols="5">
-              <v-row class="mt-4 mb-4">
-                        <v-col>
-                          <div class="ml-4">Buse Şenöz - 22</div>
-                          <div class="ml-4 mt-3">Antalya</div>
-
-                        </v-col>
-                      </v-row>
-            </v-col>
-            <v-col cols="5">
+            <v-col>
                <v-row class="mt-4 mb-4">
-                  <v-col cols="4">
+                <v-col>
                     <v-tooltip text="ResimLer" location="bottom">
                   <template v-slot:activator="{ props }">
-                    <v-btn v-bind="props" color="primary" prepend-icon="mdi-image-marker-outline">56</v-btn>
+                    <v-btn v-bind="props" color="primary" prepend-icon="mdi-image-marker-outline" class="mr-2">56</v-btn>
                   </template>
                 </v-tooltip>
-                  </v-col>
-                  <v-col cols="4">
                     <v-tooltip text="Bekleyen Etkinlikler" location="bottom">
                   <template v-slot:activator="{ props }">
-                    <v-btn v-bind="props" color="primary" prepend-icon="mdi-airplane-plus">56</v-btn>
+                    <v-btn v-bind="props" color="primary" prepend-icon="mdi-airplane-plus" class="mr-2">56</v-btn>
                   </template>
                 </v-tooltip>
-                  </v-col>
-                  <v-col cols="4">
                     <v-tooltip text="Tamamlanan Etkinlikler" location="bottom">
                   <template v-slot:activator="{ props }">
-                    <v-btn v-bind="props" color="primary" prepend-icon="mdi-airplane-check">56</v-btn>
+                    <v-btn v-bind="props" color="primary" prepend-icon="mdi-airplane-check" class="mr-2">56</v-btn>
                   </template>
                 </v-tooltip>
-                  </v-col>
-                  <v-col cols="1"></v-col>
-                  <v-col cols="6"> 
                     <v-tooltip text="En Çok Seyahat Edilen Şehir" location="bottom">
                   <template v-slot:activator="{ props }">
-                    <v-btn v-bind="props" color="primary" prepend-icon="mdi-airplane-marker">İstanbul</v-btn>
+                    <v-btn v-bind="props" color="primary" prepend-icon="mdi-airplane-marker" class="mr-2">İstanbul</v-btn>
                   </template>
                 </v-tooltip>
-                  </v-col>
-                  <v-col cols="3"><v-tooltip text="Arkadaş Sayısı" location="bottom">
+                  <v-tooltip text="Arkadaş Sayısı" location="bottom">
                   <template v-slot:activator="{ props }">
                     <v-btn v-bind="props" color="primary" prepend-icon="mdi-account">11</v-btn>
                   </template>
                 </v-tooltip>
-                  </v-col>
+              </v-col>
               </v-row>
             </v-col>
-         
-        </v-row>
-
+          </v-row>
         </v-card>
        </v-col>
       </v-row>
@@ -101,7 +88,7 @@
         </v-row>
       <v-row class="py-6">
           <v-col>
-            <div class="text-h5 text-center mt-6" >Bazı Anıların</div>
+ 
             <EffectCoverflow />
           </v-col>
         </v-row>

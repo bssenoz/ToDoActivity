@@ -2,7 +2,6 @@
   <swiper
     :effect="'flip'"
     :grabCursor="true"
-    :pagination="true"
     :navigation="true"
     :modules="modules"
     :initialSlide="initialSlide"

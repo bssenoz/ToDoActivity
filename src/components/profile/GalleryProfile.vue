@@ -15,7 +15,7 @@
             ></v-img>
             <v-row>
               <v-col>
-                <v-btn :icon="image.isFavorite ? 'mdi-heart' : 'mdi-heart-outline'" class="elevation-0"></v-btn>10
+                <v-btn :icon="isLike ? 'mdi-heart' : 'mdi-heart-outline'" class="elevation-0" @click="isLikeControl()"></v-btn>10
                 <v-btn icon="mdi-map-marker" class="elevation-0"></v-btn>Balıkesir
               </v-col>
             </v-row>
@@ -42,12 +42,17 @@
         SliderImage
     },
     setup() {
+      const isLike = ref(false);
       const images = ref([]);
       const showImageDialog = ref(false);
       const selectedImage = ref(null);
       const selectedImageIndex = ref(0);
   
       const token = localStorage.getItem("x-access-token");
+
+      const isLikeControl = () => {
+        isLike.value = !isLike.value
+      };
   
       const GetUserAllImages = async () => {
         try {
@@ -83,6 +88,8 @@
       showImageInSlider,
       GetUserAllImages,
       selectedImageIndex,
+      isLike,
+      isLikeControl
       };
     },
   };
