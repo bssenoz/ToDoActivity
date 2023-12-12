@@ -38,7 +38,7 @@ export default defineConfig({
     port: 3000,
     proxy: {
       '/api': {
-        target: 'https://localhost:44334/',
+        target: 'https://todoactivityappapi.azurewebsites.net',
         changeOrigin: true,
         secure: false,
         rewrite: path => path.replace(/^\/api/, '/api'),
